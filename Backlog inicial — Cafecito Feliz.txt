@@ -1,0 +1,17 @@
+Backlog inicial — Cafecito Feliz
+
+Instrucciones:
+- Escribe entre 8 y 12 historias.
+- Usa el formato: Como ... quiero ... para ...
+- Ordénalas por prioridad (1 = más importante).
+
+1. Como vendedor quiero buscar los productos por nombre para poder encontrarlos rápidamente
+2. Como vendedor quiero ver una lista de productos para elegir el que voy a añadir a la venta
+3. Como vendedor quiero agregar productos a un carrito para decidir si seguir con la venta
+4. Como vendedor quiero ver el subtotal y total de la vende para indicarle a mi cliente cuanto debe de pagar
+5. Como vendedor quiero generar un ticket visual para que mi cliente observe los productos de compro y cuanto gastó
+6. Como cliente quiero registrarme para tener acceso al sistema 
+7. Como cliente quiero ser identificado para que me reconozca cuando haga más de una compra
+8. Como cliente quiero que se registre mis compras para acceder a los descuentos
+9. Como administrador quiero agregar o eliminar productos para mostrarlos al cliente en el sistema
+10. Como administrador quiero modificar mis productos para poder actualizar precios o nombres

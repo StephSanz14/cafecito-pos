@@ -1,0 +1,30 @@
+= MIDDLEWARE ERRORHANDLER = 
+
+Para empezar a programar en backend, creamos un middleware para manejo de errores, lo vamos a llamar errorHandler, este archivo, ayuda a responder
+400, 404, 422 su trabajo es atrapar errores, guardarlos en un archivo, y responderle algo al cliente sin romper el código
+Solo se ejecuta cuando pasa esto en alguna ruta: throw new Error('Algo salió mal'); o next(error); y en el archivo de server.js lo trabajamos así: app.use(errorHandler);
+Express sabe que es un middleeate de error porque tiene 4 parámetros (err, req, res, next)
+Imagina que tienes esto GET /products Algo falla (base de datos, lógica, etc.). Entonces Express dice: “Ok, ocurrió un error… ¿tengo un middleware de errores Y encuentra este archivo.
+PASO 1 LLEGA EL ERROR
+const errorHandler = (err, req, res, next) => {}
+Aquí Express te entrega:
+err → el error real
+req → qué pidió el usuario
+res → para responder
+next → por si hubiera otro middleware (aquí no lo usas)
+PASO 2 SE CREA LA INFO DEL ERROR
+const dateTime = new Date();
+Guarda cuando paso el error
+req.method  → GET / POST / PUT
+req.url     → /products
+err.message → qué salió mal
+err.stack   → dónde ocurrió
+PASO 3 DECIDE DONDE GUARDAR EL ERROR
+const logFilePath = path.join(__dirname, '../../logs/error.log');
+PASO 4 GUARDA EL ERROR EN EL ARCHIVO
+PASO 5 RESPONDE AL CLIENTE 
+res.status(500).json({
+  status: 'error',
+  message: 'Internal Server Error'
+});
+

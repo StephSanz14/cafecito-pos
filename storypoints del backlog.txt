@@ -1,0 +1,10 @@
+1. Dado que estoy en mi vista de todos mis productos, cuando escribo un texto en un searchbar entonces se muestra una lista filtrada con el o los productos que coincidan con el texto. #4 PUNTOS
+2. Dado que no encuentro el producto que teclee, cuando ejecuto la búsqueda se muestra un mensaje "Producto no encontrado" #1 PUNTOS
+3. Dado que estoy realizando una venta, cuando abro el catálogo de productos, se muestra el nombre, precio y stock de cada producto #1 PUNTOS
+4. Dado que un producto no tiene stock, cuando se muestra en la lista aparece como no disponible, entonces de deshabilita el botón para agregarlo al carrito de compras #1 PUNTOS
+5. Dado que seleccione un producto con stock, cuando lo agrego al carrito de compras, entonces el stock disminuye #2 PUNTOS
+6. Dado que un producto no tiene stock, cuando lo agrego al carrito, entonces la api muestra un toast que no está disponible #1 PUNTOS
+7. Dado que tengo al menos un producto en el carrito, cuando se muestra el resumen del carrito entonces se ve el subtotal segun la cantidad y precio de los productos añadidos #2 PUNTOS
+8. Dado que tengo un producto en el carrito, cuando se actualiza la cantidad, entonces se actualiza el total #3 PUNTOS
+9. Dado que ya se tienen los productos listos para comprar, cuando se realiza la venta, entonces se genera un ticket que muestra productos, cantidad y total #4 PUNTOS
+10. Dado que no tengo productos en el carrito de compras, cuando se presiona el botón para realizar la comprea, entonces se encuentra deshabilitado #1 PUNTOS
