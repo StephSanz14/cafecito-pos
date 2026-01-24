@@ -38,13 +38,28 @@ async function createProduct (req,res,next){
         const errors = [];
 
         if (!name) {
-            errors.push ({ field: "name", message: "Name is required" });
+            errors
+            .push ({ 
+                error: "Validation failed",
+                details: [{
+                field: "name", message: "Name is required" }],
+            });
         }
 
         if (price === undefined || typeof price !== "number" || price <= 0) {
         errors.push({
+        error: "Validation failed",
+        details: [{   
         field: "price",
         message: "price must be a number greater than 0",
+        }],
+        });
+    }
+
+    if (stock === undefined || typeof stock !== "number" || stock < 0) {
+        errors.push({
+        field: "stock",
+        message: "stock must be a number greater than or equal to 0",
         });
     }
 

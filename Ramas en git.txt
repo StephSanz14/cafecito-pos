@@ -1,0 +1,350 @@
+ — RAMAS & COMMITS (Git)
+
+---
+
+## 📌 1) Qué es cada rama
+
+```text
+main        → estable (NO trabajar aquí)
+develop     → base de desarrollo
+feature/*   → trabajo real (aquí sí trabajas)
+```
+
+---
+
+## 📌 2) Crear una rama nueva (cuando empiezas algo)
+
+👉 **Siempre desde `develop`**
+
+```bash
+git checkout develop
+git pull
+git checkout -b feature/nombre-del-modulo
+git push -u origin feature/nombre-del-modulo
+```
+
+Ejemplos:
+
+```bash
+feature/products
+feature/customers
+feature/sales
+```
+
+---
+
+## 📌 3) Cambiarte de rama
+
+Ver ramas:
+
+```bash
+git branch
+```
+
+Cambiarte:
+
+```bash
+git checkout nombre-de-la-rama
+```
+
+Ejemplo:
+
+```bash
+git checkout feature/products
+```
+
+---
+
+## 📌 4) Flujo diario de trabajo (SIEMPRE igual)
+
+### 1️⃣ Ver qué cambió
+
+```bash
+git status
+```
+
+---
+
+### 2️⃣ Elegir qué archivos entran al commit
+
+Todo:
+
+```bash
+git add .
+```
+
+Solo algunos:
+
+```bash
+git add ruta/archivo1 ruta/archivo2
+```
+
+---
+
+### 3️⃣ Hacer el commit
+
+```bash
+git commit -m "mensaje claro del avance"
+```
+
+Ejemplos buenos:
+
+```text
+feat: add customer model
+feat: add product controller
+fix: validate stock as integer
+```
+
+---
+
+### 4️⃣ Subir a GitHub
+
+```bash
+git push
+```
+
+---
+
+## 📌 5) Terminar un módulo y empezar otro
+
+### Terminas Products
+
+```bash
+git add .
+git commit -m "feat: finish products module"
+git push
+```
+
+### Vuelves a la base   *****//AQUI ES PARA SUBIR A LA RAMA DEVELOP//*****
+
+```bash
+git checkout develop
+git pull
+```
+
+### Empiezas Customers
+
+```bash
+git checkout -b feature/customers
+git push -u origin feature/customers
+```
+
+---
+
+## 📌 6) ERROR COMÚN (y solución rápida)
+
+### ❌ Estoy en `main` y ya trabajé
+
+```bash
+git stash
+git checkout develop
+git checkout -b feature/lo-que-sea
+git stash pop
+```
+
+---
+
+## 📌 7) Regla de oro (memorízala)
+
+> **Nunca escribas código sin saber en qué rama estás.**
+
+Antes de programar:
+
+```bash
+git branch
+```
+
+Si ves `* main` → 🚨 detente.
+
+---
+
+## 🧩 Mini–Checklist antes de cada commit
+
+✔️ Estoy en una `feature/*`
+✔️ `git status` muestra solo lo que quiero subir
+✔️ El mensaje explica qué hice
+
+Si las 3 son **sí**, adelante.
+
+---
+ **cómo funcionan las ramas con carpetas compartidas** (routes, controllers, models). 
+ Guárdalo, porque esto es *clave* para no volverte a confundir.
+
+---
+
+# 🧠 ACORDEÓN — RAMAS + CARPETAS “GLOBALES”
+
+---
+
+## 📌 IDEA CLAVE (la más importante)
+
+> **Las ramas NO comparten archivos en tiempo real.**
+> Cada rama es una **foto distinta del proyecto**.
+
+Si cambias de rama:
+
+* cambian los archivos que ves
+* NO se borran
+* NO desaparecen, solo **no existen en esa rama**
+
+---
+
+## 📌 Qué significa “carpeta global”
+
+Ejemplos:
+
+```text
+src/routes
+src/controllers
+src/models
+```
+
+❗ No son globales para Git.
+Son **compartidas por convención**, no mágicamente.
+
+---
+
+## 📌 Regla de creación de ramas
+
+> **Toda feature nace desde `develop`.**
+
+```bash
+git checkout develop
+git checkout -b feature/customers
+```
+
+Esa rama solo tiene **lo que existía en develop en ese momento**.
+
+---
+
+## 📌 Por qué “desaparecen” archivos
+
+Si hiciste:
+
+```text
+feature/products → creaste routes/products.routes.js
+```
+
+Pero:
+
+* **NO lo mezclaste a develop**
+* luego creaste `feature/customers`
+
+👉 `feature/customers` **NO tendrá** esas rutas.
+
+Esto es NORMAL.
+
+---
+
+## 📌 Flujo correcto para módulos (products → customers)
+
+### 1️⃣ Terminas Products
+
+```bash
+git checkout feature/products
+git add .
+git commit -m "feat: finish products module"
+git push
+```
+
+### 2️⃣ Mezclas Products a develop                          ************/Mezclo productos a develop/******************
+
+```bash
+git checkout develop
+git pull
+git merge feature/products
+git push
+```
+
+Ahora:
+
+* `develop` **sí tiene** products
+
+---
+
+### 3️⃣ Traes develop a customers                    ********************************/traigo develop a mi rama/***************************
+
+```bash
+git checkout feature/customers
+git merge develop
+```
+
+Ahora:
+
+* `feature/customers` **ya ve** routes/products
+* puedes agregar routes/customers
+
+---
+
+## 📌 Cómo trabajar carpetas compartidas sin caos
+
+Estructura recomendada:
+
+```text
+src/routes/
+  products.routes.js
+  customers.routes.js
+  sales.routes.js
+```
+
+Cada feature:
+
+* agrega SU archivo
+* registra SU router
+* no toca los otros
+
+---
+
+## 📌 Regla de oro para no romper nada
+
+> **Nunca empieces una feature nueva sin traer lo último de develop.** /**********************crear nueva rama**************/
+
+Siempre:
+
+```bash
+git checkout develop
+git pull
+git checkout -b feature/nueva-feature
+```
+
+---
+
+## 📌 Cuando ya estás en una feature y necesitas cambios globales
+
+Trae develop:
+
+```bash
+git merge develop
+```
+
+Si hay conflictos → se resuelven (normal cuando crece el proyecto).
+
+---
+
+## 📌 Qué NO hacer
+
+❌ No crear feature desde otra feature
+❌ No esperar ver archivos de otra rama sin merge
+❌ No trabajar “en paralelo” sin integrar a develop
+
+---
+
+## 🧩 Checklist mental rápido
+
+Antes de trabajar:
+
+* ✔️ ¿Estoy en una feature?
+* ✔️ ¿Esta feature nació desde develop?
+* ✔️ ¿Develop tiene lo último de los módulos anteriores?
+
+Si fallas una → **merge develop primero**.
+
+---
+
+## 🎯 Frase para que se te quede
+
+> **Las ramas no comparten carpetas, comparten historia.
+> La historia se une en develop.**
+
+---
+

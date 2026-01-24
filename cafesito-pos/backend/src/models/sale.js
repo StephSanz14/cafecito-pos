@@ -8,7 +8,7 @@ const saleSchema = new mongoose.Schema(
     customerId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Customer",
-      default: null,
+      default: null, // Puede ser null para ventas sin cliente registrado
     },
     paymentMethod: {
       type: String,
@@ -22,8 +22,8 @@ const saleSchema = new mongoose.Schema(
           ref: "Product",
           required: true,
         },
-        productNameSnapshot: String,
-        unitPriceSnapshot: Number,
+        productNameSnapshot: String, // Nombre del producto al momento de la venta (por si el nombre cambia en el futuro)
+        unitPriceSnapshot: Number, // Precio unitario al momento de la venta (evita que cambios de precio afecten ventas pasadas)
         quantity: {
           type: Number,
           required: true,
@@ -54,7 +54,7 @@ const saleSchema = new mongoose.Schema(
       min: 0,
     },
   },
-  { timestamps: true }
-);
+  { timestamps: true } 
+); // Agrega automáticamente createdAt y updatedAt
 
 export const Sale = mongoose.model("Sale", saleSchema);

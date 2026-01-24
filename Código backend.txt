@@ -28,3 +28,136 @@ res.status(500).json({
   message: 'Internal Server Error'
 });
 
+=CONSTRUCCION POR BLOQUES=
+Al crear un bloque de trabajo en backend debemos de seguir el siguiente orden
+Modulos
+Controladores
+Rutas
+
+1️⃣ MÓDULOS (Models / Schemas)
+¿Qué son?
+Son la definición de tus datos.
+Aquí dices:
+Qué es una venta
+Qué campos tiene
+Qué es obligatorio
+Qué relaciones existen
+
+👉 Ejemplo mental:
+“Así luce una venta en mi sistema”
+
+¿Qué hacen?
+Validan datos
+Definen estructura
+Conectan con la base de datos
+
+¿Por qué van primero?
+
+Porque:
+Todo lo demás depende de ellos
+No puedes guardar, leer o modificar algo que no está definido
+🧠 Sin modelos, el backend no sabe qué es una venta.
+
+2️⃣ CONTROLADORES (Controllers)
+¿Qué son?
+
+Son la lógica del negocio.
+Aquí decides:
+Cómo se crea una venta
+Qué pasa cuando se vende
+Cómo se calculan totales
+Qué validaciones extra se hacen
+
+👉 Ejemplo mental:
+“Qué debe pasar cuando alguien vende algo”
+
+¿Qué hacen?
+
+Usan los modelos
+Procesan datos
+Ejecutan reglas del negocio
+Responden al cliente (JSON)
+
+¿Por qué van después?
+
+Porque:
+Los controladores usan los modelos
+Necesitan saber cómo está estructurada la información
+
+🧠 El controlador piensa, el modelo solo define.
+
+3️⃣ RUTAS (Routes)
+¿Qué son?
+
+Son las puertas de entrada a tu backend.
+Aquí defines:
+Qué URL existe
+Qué método HTTP se usa
+A qué controlador apunta
+
+👉 Ejemplo mental:
+“Por dónde entra la petición”
+
+¿Qué hacen?
+
+Reciben requests
+Llaman al controlador correcto
+No contienen lógica pesada
+
+¿Por qué van al final?
+
+Porque:
+Las rutas solo conectan
+No tienen sentido sin controladores
+No hacen nada por sí solas
+
+🧠 La ruta no piensa, solo dirige.
+
+🧩 El flujo completo (muy importante)
+Cliente (Frontend / Postman)
+        ↓
+      Ruta
+        ↓
+   Controlador
+        ↓
+      Modelo
+        ↓
+   Base de Datos
+
+
+Y de regreso 👇
+
+Base de Datos
+        ↑
+      Modelo
+        ↑
+   Controlador
+        ↑
+      Ruta
+        ↑
+     Cliente
+
+🔑 Por qué ESTE orden es una buena práctica
+
+Separación de responsabilidades
+
+Modelo → estructura
+Controlador → lógica
+Ruta → navegación
+
+Código más limpio
+No mezclas consultas con URLs
+No repites lógica
+Escalabilidad
+Agregar endpoints es fácil
+Cambiar lógica no rompe rutas
+Mantenimiento
+Si falla algo, sabes dónde buscar
+
+
+Regla mental para que nunca te confundas
+
+Modelo define → Controlador decide → Ruta expone
+
+=AUTENTICACIÓN Y ROLES DE USUARIO=
+Al trabajar con los endpoints nos encontramos con que solo algunas funciones serán ejecutadas según el Rol del usuario
