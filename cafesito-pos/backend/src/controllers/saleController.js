@@ -1,5 +1,6 @@
 import { Sale } from "../models/sale";
 import Product from "../models/product.js";
+import Customer from "../models/customer.js";
 
 async function createSale(req, res, next) {
   try {
@@ -10,19 +11,19 @@ async function createSale(req, res, next) {
       return res
         .status(400)
         .json({
-          message: "Items son requeridos y deben ser un arreglo no vacío",
+          message: "Items cannot be empty (minimum 1 item required)",
         });
     }
 
     //Validar cantidad
-    for (const items of items) {
-      const { productId, quantity } = items;
+    for (const item of items) {
+      const { productId, quantity } = item;
 
       if (!productId) {
         return res.status(400).json({ message: "Producto no encontrado" });
       }
 
-      if (!quantity || typeof quantity !== "number" || quantity < 1) {
+      if (!Number.isInteger(quantity) || quantity < 1) {
         return res
           .status(422)
           .json({
@@ -58,8 +59,35 @@ async function createSale(req, res, next) {
         });
       }
     }
+
+    //Validar que exista el cliente
+  const customer = await Customer.findById(customerId);
+  if (!customer) {
+    return res.status(400).json({
+      error: "Cliente no encontrado",
+      details: [{
+        field: "customerId",
+        message: "El cliente con el ID proporcionado no existe",
+      }],
+    });
+  }
+
+  //Validar método de pago
+  const validPaymentMethods = ["cash", "card", "transfer"]; 
+    if (!validPaymentMethods.includes(paymentMethod)) {
+        return res.status(422).json({
+            error: "Validación fallida",
+            details: [{
+                field: "paymentMethod",
+                message: `Método de pago inválido. Los métodos válidos son: ${validPaymentMethods.join(", ")}`,
+            }],
+        });
+    }
+
     return res.status(201).json({ message: "Venta creada exitosamente" });
   } catch (error) {
     next(error);
   }
+
+  
 }
