@@ -6,6 +6,13 @@ async function getProducts(req,res){
         const limit = parseInt (req.query.limit) || 20;
         const skip = (page-1)*limit;
 
+        //validat que page sea 1 o mayor
+        if (page < 1) {
+            return res.status (400).json ({
+                error: "Page must be 1 or greater",
+            });
+        }
+
         const products = await Product.find()
         .skip(skip)
         .limit(limit); 
