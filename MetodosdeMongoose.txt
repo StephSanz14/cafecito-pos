@@ -1,0 +1,605 @@
+# 🧠 ACORDEÓN — MÉTODOS DE MONGOOSE (CRUD)
+
+## 🔎 BÚSQUEDA (READ)
+
+### `Model.find(filter)`
+
+👉 **Busca MUCHOS documentos**
+
+```js
+Product.find({ stock: { $gt: 0 } })
+```
+
+* Devuelve: **array**
+* Si no hay resultados: `[]`
+* Úsalo para:
+
+  * listas
+  * búsquedas
+  * filtros
+
+---
+
+### `Model.findOne(filter)`
+
+👉 **Busca UN documento** que cumpla el filtro
+
+```js
+Product.findOne({ name: "Café Americano" })
+```
+
+* Devuelve: **objeto o `null`**
+* Úsalo cuando:
+
+  * esperas uno solo
+  * buscas por campo único (email, code, sku)
+
+---
+
+### `Model.findById(id)`
+
+👉 **Busca por `_id` de Mongo**
+
+```js
+Product.findById("65a9...")
+```
+
+* Devuelve: **objeto o `null`**
+* Solo funciona con `_id`
+* Es un shortcut de:
+
+```js
+findOne({ _id: id })
+```
+
+---
+
+## ➕ CREAR (CREATE)
+
+### `Model.create(data)`
+
+👉 **Crea y guarda en un paso**
+
+```js
+Product.create({ name, price, stock })
+```
+
+* Devuelve: el documento creado
+* Valida el schema automáticamente
+* Ideal para `POST`
+
+---
+
+### `new Model(data).save()`
+
+👉 **Crear en dos pasos**
+
+```js
+const product = new Product(data);
+await product.save();
+```
+
+* Más control
+* Útil si necesitas lógica antes de guardar
+
+---
+
+## ✏️ ACTUALIZAR (UPDATE)
+
+### `Model.findByIdAndUpdate(id, update, options)`
+
+👉 **Actualiza por `_id`**
+
+```js
+Product.findByIdAndUpdate(id, { stock: 10 }, { new: true })
+```
+
+* `{ new: true }` → devuelve el actualizado
+* Si no existe → `null`
+
+---
+
+### `Model.findOneAndUpdate(filter, update, options)`
+
+👉 **Actualiza por filtro**
+
+```js
+Product.findOneAndUpdate({ sku: "prod-001" }, update)
+```
+
+* Útil cuando no usas `_id`
+
+---
+
+### `Model.updateOne(filter, update)`
+
+👉 **Actualiza uno, sin devolver doc**
+
+```js
+Product.updateOne({ _id: id }, { $inc: { stock: -1 } })
+```
+
+* Devuelve info del update, no el documento
+
+---
+
+### `Model.updateMany(filter, update)`
+
+👉 **Actualiza varios**
+
+```js
+Product.updateMany({ category: "coffee" }, { stock: 0 })
+```
+
+---
+
+## ❌ ELIMINAR (DELETE)
+
+### `Model.findByIdAndDelete(id)`
+
+👉 Elimina por `_id`
+
+```js
+Product.findByIdAndDelete(id)
+```
+
+---
+
+### `Model.findOneAndDelete(filter)`
+
+👉 Elimina por filtro
+
+```js
+Product.findOneAndDelete({ sku: "prod-001" })
+```
+
+---
+
+### `Model.deleteOne(filter)`
+
+👉 Elimina uno (no devuelve doc)
+
+---
+
+### `Model.deleteMany(filter)`
+
+👉 Elimina muchos
+
+---
+
+## 📊 UTILIDADES
+
+### `Model.countDocuments(filter)`
+
+👉 Cuenta documentos
+
+```js
+Product.countDocuments({ stock: { $gt: 0 } })
+```
+
+---
+
+### `.select(fields)`
+
+👉 Incluir/excluir campos
+
+```js
+User.find().select("-password")
+```
+
+---
+
+### `.limit(n)`
+
+👉 Límite de resultados
+
+---
+
+### `.skip(n)`
+
+👉 Paginación
+
+---
+
+### `.sort({ field: 1 | -1 })`
+
+👉 Ordenar resultados
+
+---
+
+### `.populate(field)`
+
+👉 Traer datos relacionados
+
+```js
+Sale.find().populate("productId")
+```
+
+---
+
+## 🧠 DECISIÓN RÁPIDA (CUÁL USO)
+
+| Quiero…                    | Uso                 |
+| -------------------------- | ------------------- |
+| Lista de cosas             | `find`              |
+| Un solo doc                | `findOne`           |
+| Buscar por `_id`           | `findById`          |
+| Crear                      | `create`            |
+| Actualizar y ver resultado | `findByIdAndUpdate` |
+| Eliminar por id            | `findByIdAndDelete` |
+| Contar                     | `countDocuments`    |
+
+---
+
+## 🔥 Regla de oro
+
+> **Si devuelve promesa → usa `await`.**
+> **Si puede no existir → valida `null`.**
+
+---
+Perfecto. Aquí tienes el **acordeón de `populate`**, explicado **simple, visual y sin magia negra**.
+Este es uno de los puntos donde más gente se pierde, así que tómalo con calma.
+
+---
+
+# 🧠 ACORDEÓN — `.populate()` EN MONGOOSE
+
+---
+
+## 📌 Qué problema resuelve `populate`
+
+MongoDB **NO hace joins automáticamente**.
+
+Ejemplo sin populate:
+
+```js
+Sale.find()
+```
+
+Resultado:
+
+```json
+{
+  "_id": "sale123",
+  "items": [
+    {
+      "productId": "65abc...",
+      "quantity": 2
+    }
+  ]
+}
+```
+
+👉 Solo ves **IDs**, no información útil.
+
+---
+
+## ✅ Qué hace `populate`
+
+> **Reemplaza un ObjectId por el documento real al que apunta**
+
+Ejemplo con populate:
+
+```js
+Sale.find().populate("items.productId")
+```
+
+Resultado:
+
+```json
+{
+  "_id": "sale123",
+  "items": [
+    {
+      "productId": {
+        "_id": "65abc...",
+        "name": "Café Americano",
+        "price": 5,
+        "stock": 45
+      },
+      "quantity": 2
+    }
+  ]
+}
+```
+
+---
+
+## 📌 Requisito OBLIGATORIO para que funcione
+
+Tu schema debe tener **`ref`**.
+
+### linker correcto en el schema
+
+```js
+const saleSchema = new mongoose.Schema({
+  items: [
+    {
+      productId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",   // 👈 nombre del modelo
+        required: true,
+      },
+      quantity: Number,
+    },
+  ],
+});
+```
+
+Si **no hay `ref`**, populate NO funciona.
+
+---
+
+## 🧩 Formas comunes de usar populate
+
+---
+
+### 1️⃣ Populate simple
+
+```js
+Sale.find().populate("customerId");
+```
+
+👉 Reemplaza `customerId` por el customer completo.
+
+---
+
+### 2️⃣ Populate anidado (el que usarás en sales)
+
+```js
+Sale.find().populate("items.productId");
+```
+
+👉 Llega dentro del array `items`.
+
+---
+
+### 3️⃣ Populate con select (MUY recomendado)
+
+```js
+Sale.find().populate("items.productId", "name price");
+```
+
+Resultado:
+
+```json
+"productId": {
+  "name": "Café Americano",
+  "price": 5
+}
+```
+
+👉 No expones todo el documento.
+
+---
+
+### 4️⃣ Populate múltiple
+
+```js
+Sale.find()
+  .populate("customerId", "name email")
+  .populate("items.productId", "name price");
+```
+
+---
+
+## 📌 Populate vs Guardar datos duplicados
+
+Pregunta típica:
+
+> ¿Guardo el precio en la venta o lo saco del producto?
+
+🔑 Respuesta correcta:
+
+* **Guarda el precio en la venta**
+* Usa populate solo para mostrar info
+
+¿Por qué?
+
+* El precio puede cambiar
+* La venta debe conservar el precio histórico
+
+---
+
+## 🚨 Errores comunes (evítalos)
+
+### ❌ Usar populate sin `ref`
+
+```js
+type: ObjectId
+// sin ref → NO funciona
+```
+
+---
+
+### ❌ Pensar que populate es automático
+
+```js
+Sale.find()
+// no hace populate solo
+```
+
+---
+
+### ❌ Usar populate en exceso
+
+Populate:
+
+* ❌ es más lento
+* ❌ hace más queries
+
+Úsalo cuando:
+
+* necesitas mostrar info relacionada
+
+---
+
+## 🧠 Regla de oro
+
+> **Populate es para leer, NO para escribir.**
+
+Nunca hagas:
+
+* populate antes de guardar
+* populate dentro de validaciones
+
+---
+
+## 📌 Cuándo usar populate en tu proyecto POS
+
+✔️ GET /sales → mostrar productos
+✔️ GET /sales/:id → detalle
+❌ POST /sales → NO
+❌ Validaciones → NO
+
+---
+
+## 🎯 Frase para recordarlo
+
+> **Populate reemplaza IDs por documentos… solo cuando tú se lo pides.**
+
+---
+Excelente pregunta. Esta es **la duda clave** que separa “copiar código” de **entender backend**.
+Vamos a ordenarlo en una **tabla mental clara**: **cuándo usar `await`** y **cuándo validar `null`**.
+
+---
+
+# 🧠 REGLA BASE (grábala)
+
+> **`await` es para promesas.
+> `null` es para resultados que NO se encontraron.**
+
+Son cosas distintas, pero **suelen ir juntas**.
+
+---
+
+## 1️⃣ ¿A cuáles les aplico `await`?
+
+### 👉 A TODAS las funciones de Mongoose que hablan con la BD
+
+Ejemplos:
+
+```js
+await Product.find()
+await Product.findOne()
+await Product.findById()
+await Product.create()
+await Product.findByIdAndUpdate()
+await Product.countDocuments()
+await Sale.find().populate(...)
+```
+
+📌 **Todas devuelven promesas**
+📌 Sin `await` → obtienes una promesa, no datos
+
+---
+
+## 2️⃣ ¿A cuáles les puede regresar `null`?
+
+### 👉 Solo a las que buscan **UN solo documento**
+
+| Método              | ¿Puede devolver `null`? |
+| ------------------- | ----------------------- |
+| `findById`          | ✅ sí                    |
+| `findOne`           | ✅ sí                    |
+| `findByIdAndUpdate` | ✅ sí                    |
+| `findByIdAndDelete` | ✅ sí                    |
+| `findOneAndUpdate`  | ✅ sí                    |
+
+Ejemplo:
+
+```js
+const product = await Product.findById(id);
+
+if (!product) {
+  // aquí product === null
+}
+```
+
+---
+
+## 3️⃣ ¿Cuáles NO devuelven `null`?
+
+### 👉 Los que devuelven **arrays o números**
+
+| Método           | Qué devuelve                            |
+| ---------------- | --------------------------------------- |
+| `find`           | `[]` (array vacío si no hay resultados) |
+| `countDocuments` | `0`                                     |
+| `updateMany`     | objeto con conteo                       |
+| `deleteMany`     | objeto con conteo                       |
+
+Ejemplo:
+
+```js
+const products = await Product.find({ category: "coffee" });
+
+if (products.length === 0) {
+  // no hay resultados
+}
+```
+
+❌ **NO se valida con `if (!products)`**
+
+---
+
+## 4️⃣ Resumen rápido (tabla mental)
+
+| Caso             | Uso `await` | Valido `null` |
+| ---------------- | ----------- | ------------- |
+| `findById`       | ✅           | ✅             |
+| `findOne`        | ✅           | ✅             |
+| `find`           | ✅           | ❌             |
+| `create`         | ✅           | ❌             |
+| `countDocuments` | ✅           | ❌             |
+| `populate`       | ✅           | ❌             |
+
+---
+
+## 5️⃣ Ejemplo real de tu proyecto (Sales)
+
+```js
+const product = await Product.findById(productId);
+
+if (!product) {
+  return res.status(400).json({ error: "Product not found" });
+}
+```
+
+👉 Aquí usas:
+
+* `await` → porque habla con BD
+* `null` → porque puede no existir
+
+---
+
+## 6️⃣ Error típico que ya NO cometerás
+
+❌ Mal:
+
+```js
+const products = await Product.find();
+if (!products) { ... } // ❌ nunca pasa
+```
+
+✅ Bien:
+
+```js
+if (products.length === 0) { ... }
+```
+
+---
+
+## 🧠 Frase para recordarlo
+
+> **Await es para esperar.
+> Null es para validar existencia.**
+
+---
+
+
+
+
+
+
+

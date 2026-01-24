@@ -58,8 +58,6 @@ async function createCustomer(req, res, next) {
         field: "phoneOrEmail",
         message: "Phone or Email must be a string",
       });
-    } else {
-      const value = phoneOrEmail.trim();
     }
     const isEmail = value.includes("@"); // validación básica para decidir camino
     const isIntlPhone = /^\+[0-9]{10,15}$/.test(value); // + y solo dígitos
@@ -69,7 +67,7 @@ async function createCustomer(req, res, next) {
       const looksLikeEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
       if (!looksLikeEmail) {
-        errors.push({ field: "phoneOrEmail", message: "Email is not valid" });
+        errors.push({ field: "phoneOrEmail", message: "Must be a valid email (user@example.com)" });
       } else if (value.length < 5 || value.length > 100) {
         errors.push({
           field: "phoneOrEmail",
@@ -90,6 +88,20 @@ async function createCustomer(req, res, next) {
       return res.status(422).json({
         error: "Validation failed",
         details: errors,
+      });
+    }
+
+    //validar que no exista otro cliente con mismo phoneOrEmail
+    const existingCustomer = await Customer.findOne({ phoneOrEmail: phoneOrEmail });
+    if (existingCustomer) {
+      return res.status(400).json({
+        error: "Customer with the same Phone or Email already exists",
+        details: [
+          {
+            field: "phoneOrEmail",
+            message: "A customer with the same Phone or Email already exists",
+          },
+        ],
       });
     }
   } catch (error) {

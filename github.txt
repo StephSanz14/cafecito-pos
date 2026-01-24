@@ -1,0 +1,211 @@
+
+## Git + GitHub + Ramas (para tu proyecto POS)
+
+---
+
+## 1️⃣ Dónde vive el repositorio
+
+👉 **El repo se crea en la carpeta que representa el proyecto completo**
+
+En tu caso:
+
+```text
+cafecito-pos/
+├── backend/
+└── frontend/
+```
+
+📌 **Aquí** va:
+
+* `git init`
+* `.gitignore`
+* ramas
+* commits
+
+---
+
+## 2️⃣ Qué es cada rama (modelo mental)
+
+```text
+main     → código estable (NO trabajar aquí)
+develop  → base de desarrollo
+feature/* → trabajo real (aquí sí trabajas)
+```
+
+👉 **Nunca trabajes en `main`**
+👉 **Siempre trabajas en una `feature/*`**
+
+---
+
+## 3️⃣ Flujo inicial (solo una vez)
+
+```bash
+git init
+git branch -M main
+git add .
+git commit -m "chore: initial setup"
+git remote add origin <url>
+git push -u origin main
+
+git checkout -b develop
+git push -u origin develop
+```
+
+Después de esto:
+
+* `main` queda intocable
+* `develop` es tu base
+
+---
+
+## 4️⃣ Cuando empiezo un módulo nuevo (Products, Customers, etc.)
+
+### Regla de oro
+
+> **Una rama = una funcionalidad**
+
+### Ejemplo: Products
+
+```bash
+git checkout develop
+git checkout -b feature/products
+git push -u origin feature/products
+```
+
+📌 **Todo lo de Products va aquí**:
+
+* modelo
+* validaciones
+* controlador
+* rutas
+
+---
+
+## 5️⃣ Commits (esto es CLAVE)
+
+### Modelo mental
+
+* **Rama** → qué estoy construyendo
+* **Commit** → un paso lógico dentro de eso
+
+### Buen ejemplo
+
+```text
+feat: add product model
+feat: add product validation
+feat: add product controller
+feat: add product routes
+```
+
+### Comandos típicos
+
+```bash
+git status
+git add .
+git commit -m "feat: add product model"
+git push
+```
+
+👉 `git add .` **sube todo SOLO si estás en la rama correcta**.
+
+---
+
+## 6️⃣ ¿El commit sube “todo parejo”?
+
+✔️ **Solo si tú usas `git add .`**
+❌ Git NO sube nada solo.
+
+También puedes hacer:
+
+```bash
+git add archivo1 archivo2
+git commit -m "mensaje"
+```
+
+---
+
+## 7️⃣ Cuando termino un módulo y voy a otro
+
+### Termino Products → empiezo Customers
+
+```bash
+# aseguro que Products esté guardado
+git add .
+git commit -m "feat: finish products module"
+git push
+
+# regreso a la base
+git checkout develop
+git pull
+
+# creo nueva feature
+git checkout -b feature/customers
+git push -u origin feature/customers
+```
+
+---
+
+## 8️⃣ Cuándo mezclar ramas (merge)
+
+Solo cuando:
+
+* el módulo está completo
+* compila
+* no está a medias
+
+### Merge simple (trabajando sola)
+
+```bash
+git checkout develop
+git merge feature/products
+git push
+```
+
+⚠️ `main` solo se toca cuando:
+
+* te lo pidan
+* o el proyecto esté listo
+
+---
+
+## 9️⃣ `.gitignore` esencial (repo con backend + frontend)
+
+```text
+**/node_modules
+**/.env
+**/.env.*
+**/dist
+**/build
+**/.angular
+.vscode
+```
+
+---
+
+## 🔟 Checklist mental ANTES de trabajar
+
+Antes de escribir código, pregúntate:
+
+* ❓ ¿En qué rama estoy?
+
+```bash
+git branch
+```
+
+* ❓ ¿Esta rama corresponde a lo que voy a hacer?
+
+  * Products → `feature/products`
+  * Customers → `feature/customers`
+
+Si no → **me cambio de rama primero**.
+
+---
+
+## 🧩 Regla de oro final (memorízala)
+
+> **Nunca empieces a escribir código sin saber en qué rama estás.**
+
+Eso solo ya te ahorra el 80% de los problemas con Git.
+
+---
+
