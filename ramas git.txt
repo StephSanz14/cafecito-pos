@@ -1,0 +1,119 @@
+Claro. Aquí tienes **un resumen corto, ordenado y seguro** del flujo correcto para **cambiar de ramas, traer lo de `develop`, trabajar y luego mandar tus cambios de regreso a `develop`**. Guárdalo; es tu “receta” diaria de Git.
+
+---
+
+## 🧭 Flujo estándar de trabajo con ramas (feature → develop)
+
+### 1️⃣ Cambiar a tu rama de trabajo
+
+```bash
+git switch feature/sales
+```
+
+---
+
+### 2️⃣ Traer lo último de `develop` a tu rama
+
+*(para trabajar con código actualizado)*
+
+```bash
+git fetch origin
+git merge develop
+```
+
+* Si hay conflictos → resuélvelos, luego:
+
+  ```bash
+  git add .
+  git commit
+  ```
+
+---
+
+### 3️⃣ Trabajar en tu documento / código
+
+* Edita archivos
+* Guarda cambios
+
+---
+
+### 4️⃣ Confirmar cambios en tu rama
+
+```bash
+git status
+git add .
+git commit -m "mensaje claro del cambio"
+```
+
+---
+
+### 5️⃣ Subir tu rama al remoto
+
+```bash
+git push origin feature/sales
+```
+
+---
+
+### 6️⃣ Cambiar a `develop`
+
+```bash
+git switch develop
+```
+
+---
+
+### 7️⃣ Asegurar que `develop` esté actualizado
+
+```bash
+git pull origin develop
+```
+
+---
+
+### 8️⃣ Mandar tus cambios de la rama a `develop`
+
+```bash
+git merge feature/sales
+```
+
+* Si hay conflictos → resuelve, luego:
+
+  ```bash
+  git add .
+  git commit
+  ```
+
+---
+
+### 9️⃣ Subir `develop`
+
+```bash
+git push origin develop
+```
+
+---
+
+## 🧠 Regla mental rápida
+
+* **Traer cambios de otra rama** → `git merge otra-rama`
+* **Subir cambios al remoto** → `git push`
+* **Siempre trabajar en feature, no en develop**
+
+---
+
+## 🚨 Comandos que NO usar en este flujo
+
+* ❌ `git cherry-pick` (salvo casos muy específicos)
+* ❌ editar directamente en `develop`
+* ❌ copiar/pegar archivos entre carpetas
+
+---
+
+Si quieres, en el siguiente mensaje puedo:
+
+* convertir esto en un **checklist imprimible**
+* o hacer un **diagrama visual**
+* o adaptarlo exactamente a tu repo (`feature/products`, `feature/customers`, etc.)
+
+Dime cómo lo quieres.
