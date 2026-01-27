@@ -9,7 +9,7 @@ async function getCustomers(req, res, next) {
     const customers = await Customer.find().skip(skip).limit(parseInt(limit));
     const totalResults = await Customer.countDocuments();
     const totalPages = Math.ceil(totalResults / limit);
-    res.json({
+    res.status(200).json({
       data: customers.map((customer) => ({
         id: customer._id,
         name: customer.name,
