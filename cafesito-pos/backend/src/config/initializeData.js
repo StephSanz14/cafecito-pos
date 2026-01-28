@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
-import {Customer} from "../models/customer.js"; 
-import {Product} from "../models/product.js";
+import { Customer } from "../models/customer.js";
+import { Product } from "../models/product.js";
 
 async function generateCustomers() {
   try {
@@ -10,13 +10,13 @@ async function generateCustomers() {
       const defaultCustomers = [
         {
           name: "Admin User",
-          emailOrPhone: "admin@cafecitofeliz.com",
+          phoneOrEmail: "admin@cafecitofeliz.com",
           password: await bcrypt.hash("AdminPass123", 10),
           role: "admin",
         },
         {
           name: "John Doe",
-          emailOrPhone: "john.doe@example.com",
+          phoneOrEmail: "john.doe@example.com",
           password: await bcrypt.hash("Password123", 10),
           role: "customer",
         },

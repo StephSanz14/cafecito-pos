@@ -1,10 +1,10 @@
 import express from "express";
-import { getSales, getSaleById } from "../controllers/saleController";
+import { createSale, getSaleById } from "../controllers/saleController.js";
 import authMiddleware from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-router.get("/sales", authMiddleware, getSales);
+router.post("/sales", authMiddleware, createSale);
 router.get("/sales/:id", authMiddleware, getSaleById);
 
 export default router;

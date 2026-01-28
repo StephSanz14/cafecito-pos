@@ -1,4 +1,4 @@
-import Customer from "../models/customer.js";
+import {Customer} from "../models/customer.js";
 
 async function getCustomers(req, res, next) {
   try {

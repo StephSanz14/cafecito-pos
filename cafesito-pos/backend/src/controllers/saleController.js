@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-import Sale from "../models/sale.js";
-import Product from "../models/product.js";
-import Customer from "../models/customer.js";
+import {Sale} from "../models/sale.js";
+import {Product} from "../models/product.js";
+import {Customer} from "../models/customer.js";
 
 const round2 = (n) => Math.round((n + Number.EPSILON) * 100) / 100; // Redondea a 2 decimales
 
@@ -242,4 +242,4 @@ async function getSaleById(req, res, next) {
   }
 }
 
-export { createSale, getSales, getSaleById };
+export { createSale, getSaleById };
