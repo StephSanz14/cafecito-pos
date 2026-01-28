@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
-import Customer from "../models/customer.js";
-import Product from "../models/product.js";
+import {Customer} from "../models/customer.js"; 
+import {Product} from "../models/product.js";
 
 async function generateCustomers() {
   try {
