@@ -1,5 +1,6 @@
 import dotenv from 'dotenv'; // Importa dotenv para manejar variables de entorno
 dotenv.config(); // Carga las variables de entorno desde el archivo .env
+import { initializeData } from "./src/config/initializeData.js";
 
 import express from 'express'; // Importa el framework Express para crear el servidor web
 import dbConnection from './src/config/database.js'; // Importa la configuración de la base de datos
@@ -7,6 +8,7 @@ import cors from 'cors'; // Importa CORS para manejar solicitudes entre diferent
 
 const app = express(); // Crea una instancia de la aplicación Express
 dbConnection(); // Establece la conexión a la base de datos
+initializeData(); // Inicializa los datos predeterminados en la base de datos
 
 // Configuración de CORS para permitir solicitudes desde el frontend
 app.use(cors({

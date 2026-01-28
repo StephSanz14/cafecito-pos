@@ -46,3 +46,53 @@ async function registerCustomer(req, res) {
         next(error);
     }
 }
+
+async function loginCustomer(req, res, next) {
+    try {
+        const { emailOrPhone, password } = req.body;
+        const customerExist = await checkCustomerExists(emailOrPhone);
+        if (!customerExist) {
+            return res.status(400).json({ message: 'User does not exist. You must to sign in'  });
+        }
+        console.log(customerExist);
+        const isMatch =  await bcrypt.compare(password, customerExist.password);
+        if (!isMatch) {
+            return res.status(400).json({ message: 'Invalid credentials' });
+        }
+        const token = generateToken(customerExist._id, customerExist.role);
+        const refreshToken = generateRefreshToken(customerExist._id);
+        res.json({ token, refreshToken:refreshToken });
+    } catch (error) {
+        next(error);
+    }
+}
+
+const checkEmailorPhonealredyRegistered = async (emailOrPhone) => {
+    try {
+        const { emailOrPhone } = req.query;
+        console.log(emailOrPhone);
+        const customer = await Customer.findOne ({ emailOrPhone });
+        res.json({ exists: !!customer });
+    } catch (error) {
+        next(error);
+    }
+};
+
+const refreshToken = async (req, res, next) => {
+    try {
+        const { refreshToken } = req.body;
+        const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+        const customer = await Customer.findById(decoded.customerId);
+        if (customer) {
+            const newToken = generateToken(customer._id, customer.role, customer.name);
+
+            res.json({ token: newToken });
+        } else {
+            res.status(401).json({ message: 'Invalid refresh token' });
+        }
+    } catch (error) {
+        next(error);
+    }
+};
+
+export { registerCustomer, loginCustomer, checkEmailorPhonealredyRegistered, refreshToken };
