@@ -41,5 +41,5 @@ if (process.env.INITIAL_DATA === "development") {
 const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`); 
 }); // Inicia el servidor en el puerto definido en las variables de entorno 
