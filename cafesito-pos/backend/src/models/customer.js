@@ -17,6 +17,15 @@ const customerSchema = new mongoose.Schema(
       default: 0,
       min: 0,
     },
+    password: {
+      type: String,
+      required: true, 
+    },
+    role: {
+      type: String,
+      enum: ['customer', 'admin'],
+      default: 'customer',
+    },
   },
   { timestamps: true }
 );
