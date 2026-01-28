@@ -153,4 +153,93 @@ async function createSale(req, res, next) {
   }
 }
 
-export { createSale };
+/* async function getSales(req, res, next) {
+  try {
+    const sales = await Sale.find().sort({ createdAt: -1 }); // Ordenamos por fecha descendente
+
+    return res.status(200).json(
+      sales.map((sale) => ({
+        saleId: sale.saleId,
+        customerId: sale.customerId,
+        paymentMethod: sale.paymentMethod,
+        items: sale.items.map((it) => ({
+          productId: String(it.productId),
+          productName: it.productNameSnapshot,
+          quantity: it.quantity,
+          unitPrice: it.unitPriceSnapshot,
+          lineTotal: it.lineTotal,
+        })),
+        subtotal: sale.subtotal,
+        discountPercent: sale.discountPercent,
+        discountAmount: sale.discountAmount,
+        total: sale.total,
+        ticket: {
+          saleId: sale.saleId,
+          timestamp: sale.createdAt.toISOString(),
+          storeName: "Cafecito Feliz",
+          items: sale.items.map((it) => ({
+            name: it.productNameSnapshot,
+            qty: it.quantity,
+            unitPrice: it.unitPriceSnapshot,
+            lineTotal: it.lineTotal,
+          })),
+          subtotal: sale.subtotal,
+          discount: `${sale.discountPercent}% (-$${sale.discountAmount.toFixed(2)})`,
+          total: sale.total,
+          paymentMethod: sale.paymentMethod,
+        },
+        createdAt: sale.createdAt,
+      }))
+    );
+  } catch (error) {
+    next(error);
+  }
+} */
+
+async function getSaleById(req, res, next) {
+  try {
+    const id = (req.params.id || "").trim();
+    const sale = await Sale.findOne({ saleId: id });
+
+    if (!sale) {
+      return res.status(404).json({ error: "Sale not found", id: id });
+    }
+
+    return res.status(200).json({
+      saleId: sale.saleId,
+      customerId: sale.customerId,
+      paymentMethod: sale.paymentMethod,
+      items: sale.items.map((it) => ({
+        productId: String(it.productId),
+        productName: it.productNameSnapshot,
+        quantity: it.quantity,
+        unitPrice: it.unitPriceSnapshot,
+        lineTotal: it.lineTotal,
+      })),
+      subtotal: sale.subtotal,
+      discountPercent: sale.discountPercent,
+      discountAmount: sale.discountAmount,
+      total: sale.total,
+      ticket: {
+        saleId: sale.saleId,
+        timestamp: sale.createdAt.toISOString(),
+        storeName: "Cafecito Feliz",
+        items: sale.items.map((it) => ({
+          name: it.productNameSnapshot,
+          qty: it.quantity,
+          unitPrice: it.unitPriceSnapshot,
+          lineTotal: it.lineTotal,
+        })),
+        subtotal: sale.subtotal,
+        discount: `${sale.discountPercent}% (-$${sale.discountAmount.toFixed(2)})`,
+        total: sale.total,
+        paymentMethod: sale.paymentMethod,
+      },
+      createdAt: sale.createdAt.toISOString(), // Formateamos la fecha a ISO 8601
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export { createSale, getSales, getSaleById };
