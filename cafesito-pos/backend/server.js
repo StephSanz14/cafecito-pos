@@ -8,7 +8,6 @@ import cors from 'cors'; // Importa CORS para manejar solicitudes entre diferent
 
 const app = express(); // Crea una instancia de la aplicación Express
 dbConnection(); // Establece la conexión a la base de datos
-initializeData(); // Inicializa los datos predeterminados en la base de datos
 
 // Configuración de CORS para permitir solicitudes desde el frontend
 app.use(cors({
@@ -36,6 +35,7 @@ app.use((req, res) => {
 
 if (process.env.INITIAL_DATA === "development") {
   console.log("INITIAL_DATA enabled, but no seed implemented yet");
+  initializeData(); // Inicializa los datos predeterminados en la base de datos
 }
 
 const PORT = process.env.PORT || 3001;
