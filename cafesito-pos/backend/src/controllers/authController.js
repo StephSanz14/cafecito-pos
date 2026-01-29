@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import Customer from '../models/customer.js' 
+import {Customer} from '../models/customer.js' 
 
 const generateToken = (customerId, role) => {
     return jwt.sign({ id: customerId, role }, 
@@ -10,7 +10,7 @@ const generateToken = (customerId, role) => {
 
 const generateRefreshToken = (customerId) => {
     const refreshToken = jwt.sign({ id: customerId }, 
-        process.env.REFRESH_TOKEN_SECRET, 
+        process.env.JWT_REFRESH_SECRET, 
         { expiresIn: '365d' });
         return refreshToken;
 }
@@ -20,15 +20,18 @@ const generatePassword = async (password) => {
     return await bcrypt.hash(password, salt); //salt es un numero que indica la complejidad del hash
 }
 
-const checkCustomerExists = async (emailOrPhone) => {
-    const customer = await Customer.findOne({ email: emailOrPhone });
-    return customer;
+async function checkCustomerExists(phoneOrEmail) {
+  const value = (phoneOrEmail || "").trim();
+  const isEmail = value.includes("@");
+  const normalized = isEmail ? value.toLowerCase() : value;
+
+  return Customer.findOne({ phoneOrEmail: normalized });
 }
 
-async function registerCustomer(req, res) {
+async function registerCustomer(req, res, next) {
     try {
-        const { name, emailOrPhone, password } = req.body;
-        const existingCustomer = await checkCustomerExists(emailOrPhone);
+        const { name, phoneOrEmail, password } = req.body;
+        const existingCustomer = await checkCustomerExists(phoneOrEmail);
         if (existingCustomer) {
             return res.status(400).json({ message: 'Customer already exists' });
         }
@@ -36,7 +39,7 @@ async function registerCustomer(req, res) {
         const hashedPassword = await generatePassword(password);
         const newCustomer = new Customer({
             name,
-            emailOrPhone,
+            phoneOrEmail,
             password: hashedPassword,
             role,
         });
@@ -49,8 +52,8 @@ async function registerCustomer(req, res) {
 
 async function loginCustomer(req, res, next) {
     try {
-        const { emailOrPhone, password } = req.body;
-        const customerExist = await checkCustomerExists(emailOrPhone);
+        const { phoneOrEmail, password } = req.body;
+        const customerExist = await checkCustomerExists(phoneOrEmail);
         if (!customerExist) {
             return res.status(400).json({ message: 'User does not exist. You must to sign in'  });
         }
@@ -67,11 +70,11 @@ async function loginCustomer(req, res, next) {
     }
 }
 
-const checkEmailorPhonealredyRegistered = async (emailOrPhone) => {
+const checkphoneOrEmailalredyRegistered = async (phoneOrEmail) => {
     try {
-        const { emailOrPhone } = req.query;
-        console.log(emailOrPhone);
-        const customer = await Customer.findOne ({ emailOrPhone });
+        const { phoneOrEmail } = req.query;
+        console.log(phoneOrEmail);
+        const customer = await Customer.findOne ({ phoneOrEmail });
         res.json({ exists: !!customer });
     } catch (error) {
         next(error);
@@ -95,4 +98,4 @@ const refreshToken = async (req, res, next) => {
     }
 };
 
-export { registerCustomer, loginCustomer, checkEmailorPhonealredyRegistered, refreshToken };
+export { registerCustomer, loginCustomer, checkphoneOrEmailalredyRegistered, refreshToken };
