@@ -30,12 +30,12 @@ async function checkCustomerExists(phoneOrEmail) {
 
 async function registerCustomer(req, res, next) {
     try {
-        const { name, phoneOrEmail, password } = req.body;
+        const { name, phoneOrEmail, password } = req.body; 
         const existingCustomer = await checkCustomerExists(phoneOrEmail);
         if (existingCustomer) {
             return res.status(400).json({ message: 'Customer already exists' });
         }
-        /* let role = 'customer'; */
+
         const hashedPassword = await generatePassword(password);
         const newCustomer = new Customer({
             name,

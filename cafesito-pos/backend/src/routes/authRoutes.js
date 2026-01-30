@@ -35,6 +35,8 @@ router.post(
       }),
 
     body("password")
+      .notEmpty()
+      .withMessage("Password is required")
       .isLength({ min: 6 })
       .withMessage("Password must be at least 6 characters long")
       .matches(/\d/)
@@ -45,7 +47,7 @@ router.post(
     body("role")
       .optional()
       .isIn(["admin", "customer"])
-      .withMessage("Role must to be admin,customer or guest"),
+      .withMessage("Role must to be admin,customer"),
   ],
   validate,
   registerCustomer,

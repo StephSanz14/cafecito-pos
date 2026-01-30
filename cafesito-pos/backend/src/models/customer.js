@@ -21,15 +21,17 @@ const customerSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: true, 
+      required: function () {
+        return this.role === "admin" || this.role === "seller";
+      },
     },
     role: {
       type: String,
-      enum: ['customer', 'admin'],
-      default: 'customer',
+      enum: ["customer", "admin", "seller"],
+      default: "customer",
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const Customer = mongoose.model("Customer", customerSchema);
