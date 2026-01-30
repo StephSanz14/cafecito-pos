@@ -41,7 +41,7 @@ async function registerCustomer(req, res, next) {
             name,
             phoneOrEmail,
             password: hashedPassword,
-            role,
+            role: "seller",
         });
         await newCustomer.save();
         res.status(201).json({ message: 'Customer registered successfully' });

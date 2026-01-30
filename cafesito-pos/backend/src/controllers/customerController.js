@@ -85,6 +85,7 @@ async function createCustomer(req, res, next) {
     const newCustomer = await Customer.create({
       name: name.trim(),
       phoneOrEmail: normalized,
+      role: "customer",
     });
 
     return res.status(201).json({
