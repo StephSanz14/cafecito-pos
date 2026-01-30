@@ -35,7 +35,7 @@ async function registerCustomer(req, res, next) {
         if (existingCustomer) {
             return res.status(400).json({ message: 'Customer already exists' });
         }
-        let role = 'customer';
+        /* let role = 'customer'; */
         const hashedPassword = await generatePassword(password);
         const newCustomer = new Customer({
             name,
@@ -84,8 +84,8 @@ const checkphoneOrEmailalredyRegistered = async (phoneOrEmail) => {
 const refreshToken = async (req, res, next) => {
     try {
         const { refreshToken } = req.body;
-        const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
-        const customer = await Customer.findById(decoded.customerId);
+        const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+        const customer = await Customer.findById(decoded.id);
         if (customer) {
             const newToken = generateToken(customer._id, customer.role, customer.name);
 

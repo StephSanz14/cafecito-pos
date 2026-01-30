@@ -5,8 +5,8 @@ import isAdmin from '../middlewares/isAdmin.js';
 
 const router = express.Router();
 
-router.get('/products', authMiddleware, getProducts);
-router.get('/products/:id', authMiddleware, findProductbyID);
+router.get('/products', getProducts);
+router.get('/products/:id', findProductbyID);
 router.post('/products', authMiddleware, isAdmin, createProduct);
 router.put('/products/:id', authMiddleware, isAdmin, updateProduct);
 router.delete('/products/:id', authMiddleware, isAdmin,deleteProduct);

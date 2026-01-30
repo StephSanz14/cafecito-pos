@@ -68,7 +68,7 @@ async function createProduct(req, res, next) {
       errors.push({
         field: "name",
         message: "Name is required",
-      });
+      }); 
     }
 
     if (price === undefined || typeof price !== "number" || price <= 0) {
@@ -78,10 +78,10 @@ async function createProduct(req, res, next) {
       });
     }
 
-    if (stock === undefined || typeof stock !== "number" || stock < 0) {
+    if (stock === undefined || typeof stock !== "number" || stock < 1) {
       errors.push({
         field: "stock",
-        message: "stock must be a number greater than or equal to 0",
+        message: "stock must be a number greater than or equal to 1",
       });
     }
 
