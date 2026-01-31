@@ -33,8 +33,6 @@ export const routes: Routes = [
               title: 'Clientes',
               data: { roles: ['admin', 'seller'] },
            },
-
-           //admin only
            {path: 'productos', loadComponent: () => 
               import('../pages/productos/productos.component').then((c) => c.ProductosComponent),
               title: 'Productos',

@@ -1,0 +1,34 @@
+//SETUP INICIAL//
+Para trabajar en Frontend instalamos Tailwind
+En la estructura de mis carpetas, construí una que se llama layout en donde cree dos componentes
+el primero es el shell el cual es como un contenedor o un armazon y a partir de ahi van a estar 
+intercambiandose las vistas entre ventas, productos y clientes
+también cree otro componente que es el sidebar, esta barra de navegación me da la opcion de 
+rutear hacia que componente me voy a dirigir
+Posteriormente cree una carpeta que la llame pages, en ella cree tres componentes: ventas, clientes y productos
+para las vistas y otras dos que son para logearse y para registrarse
+Esas fueron mis configuraciones iniciales...
+
+//RUTAS GLOBALES DE VISTAS//
+Para poderlas ver en el navegador, me fui al archivo de app.routes.ts
+ahi configure las rutas con esta estructura
+ //Login Route
+    {
+    path: 'login',
+    loadComponent: () =>
+      import('../pages/login/login.component').then((c) => c.LoginComponent),
+    title: 'Login',
+  },
+y para camiar entre vistas use rutas children:
+Las rutas con children sirven para:
+Compartir un layout (estructura base) y cambiar solo el contenido interno
+Piensa en esto:
+Un ShellComponent con:
+sidebar
+header
+footer
+Y dentro de él, distintas páginas:
+ventas
+clientes
+productos
+👉 El shell no cambia, solo cambia lo que va dentro.
