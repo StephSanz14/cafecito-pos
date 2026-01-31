@@ -12,7 +12,7 @@ function calculateDiscount(purchasesCount) {
   return 15; // 15% de descuento
 }
 
-async function createSale(req, res, next) {
+async function createSale(req, res, next) { 
   try {
     const { customerId, items, paymentMethod } = req.body;
 
