@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
+import { roleGuard } from './core/guards/role.guard';
 
 export const routes: Routes = [
     //register route
@@ -29,16 +30,19 @@ export const routes: Routes = [
               import('./pages/ventas/ventas.component').then((c) => c.VentasComponent),
               title: 'Ventas',
               data: { roles: ['admin', 'seller'] },
+              canActivate: [roleGuard],
            },
            {path: 'clientes', loadComponent: () => 
               import('./pages/clientes/clientes.component').then((c) => c.ClientesComponent),
               title: 'Clientes',
               data: { roles: ['admin', 'seller'] },
+              canActivate: [roleGuard],
            },
            {path: 'productos', loadComponent: () => 
               import('./pages/productos/productos.component').then((c) => c.ProductosComponent),
               title: 'Productos',
               data: { roles: ['admin', 'seller'] },
+              canActivate: [roleGuard],
            },
         ],
   },

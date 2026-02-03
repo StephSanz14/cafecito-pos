@@ -1,29 +1,65 @@
+<!-- Header -->
 <div class="flex items-center justify-between">
-  <h1 class="text-2xl font-bold text-zinc-100">Clientes</h1>
-  <button class="rounded-xl bg-amber-600 hover:bg-amber-500 text-zinc-950 font-semibold px-4 py-2">
+  <div>
+    <h1 class="text-2xl font-bold text-zinc-100">Clientes</h1>
+    <p class="text-sm text-zinc-400">
+      Lista de clientes registrados (solo usuarios con sesión)
+    </p>
+  </div>
+
+  <!-- Seller + Admin (porque POST /customers lo permite) -->
+  <button
+    *appHasRole="['admin','seller']"
+    class="rounded-xl bg-amber-600 hover:bg-amber-500 text-zinc-950 font-semibold px-4 py-2 transition"
+  >
     + Nuevo cliente
   </button>
 </div>
 
+<!-- Search -->
 <div class="mt-4">
-  <input class="w-full rounded-xl bg-zinc-900 border border-zinc-800 px-4 py-3 text-zinc-100"
-         placeholder="Buscar por teléfono o correo..." />
+  <input
+    class="w-full rounded-xl bg-zinc-900 border border-zinc-800 px-4 py-3 text-zinc-100 placeholder-zinc-500"
+    placeholder="Buscar cliente por nombre o teléfono/correo..."
+  />
 </div>
 
+<!-- Table -->
 <div class="mt-4 bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden">
+
+  <!-- Header -->
   <div class="grid grid-cols-12 px-4 py-3 text-xs text-zinc-400 border-b border-zinc-800">
-    <div class="col-span-4">Nombre</div>
-    <div class="col-span-5">Teléfono/Correo</div>
-    <div class="col-span-1 text-right">Compras</div>
-    <div class="col-span-2 text-right">Acción</div>
+    <div class="col-span-5">Nombre</div>
+    <div class="col-span-5">Teléfono / Correo</div>
+    <div class="col-span-2 text-right">Acciones</div>
   </div>
 
-  <div class="grid grid-cols-12 px-4 py-3 items-center border-b border-zinc-800">
-    <div class="col-span-4 text-zinc-100">Ana López</div>
-    <div class="col-span-5 text-zinc-300">4491234567</div>
-    <div class="col-span-1 text-right text-zinc-200">5</div>
+  <!-- Row mock (luego será *ngFor) -->
+  <div class="grid grid-cols-12 px-4 py-3 items-center border-b border-zinc-800 hover:bg-zinc-800/40">
+    <div class="col-span-5 text-zinc-100">
+      Luis Antonio Moreno
+    </div>
+
+    <div class="col-span-5 text-zinc-200">
+      +52 449 997 3850
+    </div>
+
     <div class="col-span-2 text-right">
-      <button class="px-3 py-1 rounded-lg bg-zinc-950 border border-zinc-800 text-zinc-200 text-sm">Ver</button>
+      <!-- Seller + Admin (GET /customers/:id lo permite) -->
+      <button
+        *appHasRole="['admin','seller']"
+        class="px-3 py-1 rounded-lg bg-zinc-950 border border-zinc-800 text-zinc-200 text-sm hover:bg-zinc-800 transition"
+      >
+        Ver
+      </button>
     </div>
   </div>
+
+  <!-- Empty state -->
+  <!--
+  <div class="px-4 py-10 text-center text-zinc-400">
+    No hay clientes registrados
+  </div>
+  -->
+
 </div>
