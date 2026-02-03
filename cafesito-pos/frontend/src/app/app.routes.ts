@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
     //register route
@@ -21,6 +22,7 @@ export const routes: Routes = [
     path: '',
     loadComponent: () =>
       import('../layout/shell/shell.component').then((c) => c.ShellComponent),
+      canActivate: [authGuard], // Aquí puedes agregar guards si es necesario
         children: [
            { path: '', pathMatch: 'full', redirectTo: 'ventas' },
            {path: 'ventas', loadComponent: () => 
