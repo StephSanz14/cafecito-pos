@@ -9,6 +9,15 @@ Posteriormente cree una carpeta que la llame pages, en ella cree tres componente
 para las vistas y otras dos que son para logearse y para registrarse
 Esas fueron mis configuraciones iniciales...
 
+1️⃣ Rutas + Shell ✔️
+2️⃣ Login / Register ✔️
+3️⃣ TokenService ✔️
+4️⃣ AuthGuard ← aquí estamos
+5️⃣ RoleGuard
+6️⃣ Interceptor
+7️⃣ Services de negocio
+8️⃣ Refresh token (opcional)
+
 //RUTAS GLOBALES DE VISTAS//
 Para poderlas ver en el navegador, me fui al archivo de app.routes.ts
 ahi configure las rutas con esta estructura
@@ -132,3 +141,33 @@ No lo tienes aún
 Te dan un ticket y te llaman cuando esté listo
 📌 El ticket es el Observable
 📌 El café es el valor
+
+-----GUARDS----
+
+¿Dónde actúan? En la navegación de rutas del frontend.
+¿Qué hacen?
+Antes de entrar a una ruta, revisan condiciones:
+¿hay token? (authGuard)
+¿tiene rol admin? (roleGuard)
+
+Si no cumple:
+lo mandan a /login o a /ventas
+¿Para qué te sirve AHORITA?
+✅ Para que el usuario no vea páginas internas si no está logueado.
+✅ Para que un seller no entre a cosas que solo admin puede.
+
+Ejemplo mental:
+“El guard es el guardia de seguridad en la puerta del edificio. Si no tienes credencial, no entras.”
+
+---Interceptor (HTTP)---
+
+¿Dónde actúa? En todas las llamadas HTTP (GET/POST/PUT/DELETE).
+¿Qué hace?
+Agarra tu token del TokenService
+Lo pega automáticamente en cada request:
+Authorization: Bearer <token>
+(Opcional después) Si el backend responde 401, intenta refresh y reintenta
+¿Para qué te sirve AHORITA?
+✅ Para que tus endpoints privados (/customers, /sales, CRUD products) funcionen sin que estés copiando el header en cada request.
+Ejemplo mental:
+“Cada vez que sales de tu casa, el interceptor se asegura de que lleves tu INE en la cartera.”

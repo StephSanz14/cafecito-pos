@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
+import { HasRoleDirective } from '../../core/directives/hasrole.directive';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-productos',
-  imports: [],
+  imports: [CommonModule, HasRoleDirective],
   templateUrl: './productos.component.html',
   styleUrl: './productos.component.css'
 })
