@@ -3,10 +3,11 @@
     <h1 class="text-2xl font-bold text-amber-400">Crear cuenta</h1>
     <p class="text-zinc-400 mt-1">Registro de vendedor</p>
 
-    <form class="mt-6 space-y-4">
+    <form class="mt-6 space-y-4" (ngSubmit)="onSubmit()">
       <div>
         <label class="text-sm text-zinc-300">Nombre</label>
         <input
+          [(ngModel)]="name"
           class="mt-1 w-full rounded-xl bg-zinc-950 border border-zinc-800 px-4 py-3 text-zinc-100"
           placeholder="Nombre completo"
         />
@@ -15,6 +16,9 @@
       <div>
         <label class="text-sm text-zinc-300">Teléfono o correo</label>
         <input
+          [(ngModel)]="phoneOrEmail"
+          name="phoneOrEmail"
+          (blur)="onBlurCheck()"
           class="mt-1 w-full rounded-xl bg-zinc-950 border border-zinc-800 px-4 py-3 text-zinc-100"
           placeholder="4491234567 o correo@mail.com"
         />
@@ -23,15 +27,17 @@
       <div>
         <label class="text-sm text-zinc-300">Contraseña</label>
         <input
+          [(ngModel)]="password"
+          name="password"
           type="password"
           class="mt-1 w-full rounded-xl bg-zinc-950 border border-zinc-800 px-4 py-3 text-zinc-100"
           placeholder="••••••••"
         />
       </div>
 
-      <button
+      <button type="submit" [disabled]="loading"
         class="w-full rounded-xl bg-amber-600 hover:bg-amber-500 text-zinc-950 font-semibold py-3">
-        Registrarme
+        {{ loading ? 'Registrando...' : 'Registrarme' }}
       </button>
 
       <p class="text-sm text-zinc-500 text-center">

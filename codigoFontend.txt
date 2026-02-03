@@ -32,3 +32,103 @@ ventas
 clientes
 productos
 👉 El shell no cambia, solo cambia lo que va dentro.
+
+//injectable
+@Injectable() es un decorador que le dice a Angular:
+
+“Esta clase puede ser inyectada como dependencia en otros componentes, servicios o guards”.
+¿Qué pasa si NO pongo @Injectable?
+Angular NO puede inyectarlo en otros lados.
+Esto fallará ❌:
+constructor(private authService: AuthService) {}
+
+//funcion asyncrona
+Una función es asíncrona cuando NO puede devolver el resultado de inmediato y tiene que esperar algo externo o lento.
+👉 En JavaScript eso significa: devuelve una Promesa.
+¿Cuándo una función debe ser asíncrona (async)?
+
+Una función es asíncrona cuando NO puede devolver el resultado de inmediato y tiene que esperar algo externo o lento.
+
+👉 En JavaScript eso significa: devuelve una Promesa.
+
+Casos típicos (los importantes)
+1️⃣ Conectarse con backend ✅
+✔️ Peticiones HTTP
+fetch
+HttpClient en Angular
+axios
+async getSales() {
+  return await this.http.get('/api/sales');
+}
+
+2️⃣ Subir o descargar archivos ✅
+✔️ Archivos grandes
+✔️ Lectura de archivos
+async uploadFile(file: File) {
+  await this.http.post('/upload', file);
+}
+
+3️⃣ Acceso a base de datos ✅
+(en backend)
+const sale = await Sale.findById(id);
+MongoDB
+MySQL
+PostgreSQL
+Firebase
+
+4️⃣ Lectura o escritura de archivos del sistema ✅
+(Node.js)
+await fs.promises.readFile('file.txt');
+
+5️⃣ Autenticación / seguridad ✅
+✔️ Hash de contraseñas
+✔️ Generar tokens
+const hash = await bcrypt.hash(password, 10);
+
+6️⃣ Llamar APIs externas ✅
+✔️ Google Maps
+✔️ Stripe
+✔️ PayPal
+await stripe.paymentIntents.create(...);
+
+7️⃣ Temporizadores o esperas reales ✅
+await new Promise(resolve => setTimeout(resolve, 2000));
+
+1️⃣ ¿Qué es HttpClient?
+
+Piensa en HttpClient como el mensajero de Angular.
+👉 Su único trabajo es:
+mandar requests HTTP (GET, POST, PUT, DELETE)
+recibir la respuesta del backend
+Ejemplo mental:
+“Angular, ve al backend y pregúntale algo”
+Eso lo hace HttpClient.
+¿Por qué HttpClient devuelve un Observable?
+
+Aquí está la parte clave 👇
+
+Angular NO devuelve datos inmediatamente
+
+Porque:
+el backend puede tardar
+puede fallar
+puede responder después
+Entonces Angular dice:
+“No te doy el dato aún.
+Te doy algo que me avisa cuando llegue.”
+Ese “algo” es un Observable.
+
+3️⃣ ¿Qué es un Observable? (en español real)
+Un Observable es:
+
+“una promesa de que en el futuro llegará un valor (o un error)”.
+
+No es el valor.
+Es la espera.
+
+Ejemplo de la vida real:
+Pediste un café ☕
+No lo tienes aún
+Te dan un ticket y te llaman cuando esté listo
+📌 El ticket es el Observable
+📌 El café es el valor
