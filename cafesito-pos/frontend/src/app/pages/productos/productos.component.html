@@ -1,3 +1,5 @@
+
+
 <!-- Header -->
 <div class="flex items-center justify-between">
   <div>
@@ -18,6 +20,8 @@
 <!-- Search -->
 <div class="mt-4">
   <input
+    [(ngModel)]="q"
+    name="q"
     class="w-full rounded-xl bg-zinc-900 border border-zinc-800 px-4 py-3 text-zinc-100 placeholder-zinc-500"
     placeholder="Buscar producto..." />
 </div>
@@ -34,21 +38,12 @@
   </div>
 
   <!-- Row (mock, luego será *ngFor) -->
-  <div class="grid grid-cols-12 px-4 py-3 items-center border-b border-zinc-800 hover:bg-zinc-800/40">
-    <div class="col-span-6 text-zinc-100">
-      Café Americano
-    </div>
-
-    <div class="col-span-2 text-right text-zinc-200">
-      $35.00
-    </div>
-
-    <div class="col-span-2 text-right">
-      <span
-        class="px-2 py-1 text-xs rounded-full bg-emerald-500/10 text-emerald-400">
-        Disponible
-      </span>
-    </div>
+  <div 
+  *ngFor="let p of filteredProducts"
+  class="grid grid-cols-12 px-4 py-3 items-center border-b border-zinc-800 hover:bg-zinc-800/40">
+  <div class="col-span-6 text-zinc-100">{{ p.name }}</div>
+  <div class="col-span-2 text-right text-zinc-200">{{ p.price | currency:'MXN' }}</div>
+   <div class="col-span-2 text-right text-zinc-200">{{ p.stock }}</div>
 
     <div class="col-span-2 text-right space-x-2">
       <!-- Admin only -->

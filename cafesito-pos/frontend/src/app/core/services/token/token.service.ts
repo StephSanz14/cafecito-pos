@@ -22,4 +22,5 @@ export class TokenService {
     localStorage.removeItem(this.ROLE_KEY);
     localStorage.removeItem(this.REFRESH_KEY);
   }
+
 }
