@@ -64,17 +64,17 @@ async function loginCustomer(req, res, next) {
         }
         const token = generateToken(customerExist._id, customerExist.role);
         const refreshToken = generateRefreshToken(customerExist._id);
-        res.json({ token, refreshToken:refreshToken, role: customerExist.role});
+        res.json({ token, refreshToken:refreshToken });
     } catch (error) {
         next(error);
     }
 }
 
-const checkphoneOrEmailalredyRegistered = async (req, res, next) => {
+const checkphoneOrEmailalredyRegistered = async (phoneOrEmail) => {
     try {
         const { phoneOrEmail } = req.query;
         console.log(phoneOrEmail);
-        const customer = await checkCustomerExists(phoneOrEmail);
+        const customer = await Customer.findOne ({ phoneOrEmail });
         res.json({ exists: !!customer });
     } catch (error) {
         next(error);

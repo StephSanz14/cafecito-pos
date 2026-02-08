@@ -1,4 +1,4 @@
-import Customer from "../models/customer.js";
+import { Customer } from "../models/customer.js";
 
 async function getCustomers(req, res, next) {
   try {
@@ -13,7 +13,7 @@ async function getCustomers(req, res, next) {
       data: customers.map((customer) => ({
         id: customer._id,
         name: customer.name,
-        phoneoremail: customer.phoneOrEmail,
+        phoneOrEmail: customer.phoneOrEmail,
         purchasesCount: customer.purchasesCount,
         createdAt: customer.createdAt,
         updatedAt: customer.updatedAt,

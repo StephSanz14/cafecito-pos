@@ -20,8 +20,8 @@ export class CustomerService {
         response.data.map(customer => ({
           ...customer,
           id: customer.id,
-          name: customer.name.toUpperCase(),
-          phoneOrEmail: customer.phoneOrEmail.toLowerCase(),
+          name: customer.name ?? ''.toUpperCase(),
+          phoneOrEmail: customer.phoneOrEmail ?? ''.toLowerCase(),
         }))
       )
     );
@@ -33,7 +33,7 @@ export class CustomerService {
         ...customer,
         name: (customer.name ?? '').toUpperCase(),
         id: customer.id, 
-        phoneOrEmail: customer.phoneOrEmail.toLowerCase(),
+        phoneOrEmail: customer.phoneOrEmail ?? ''.toLowerCase(),
         purchasesCount: customer.purchasesCount,
       }))
     );
