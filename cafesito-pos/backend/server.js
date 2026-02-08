@@ -1,5 +1,7 @@
 import dotenv from 'dotenv'; // Importa dotenv para manejar variables de entorno
 dotenv.config(); // Carga las variables de entorno desde el archivo .env
+import setupGlobalErrorHandlers from './src/middlewares/globalErrorHandler.js';
+setupGlobalErrorHandlers(); // Configura los manejadores globales de errores para capturar excepciones no controladas y rechazos no manejados
 console.log("JWT_SECRET loaded?", !!process.env.JWT_SECRET);
 console.log("JWT_REFRESH_SECRET loaded?", !!process.env.JWT_REFRESH_SECRET);
 import { initializeData } from "./src/config/initializeData.js";
