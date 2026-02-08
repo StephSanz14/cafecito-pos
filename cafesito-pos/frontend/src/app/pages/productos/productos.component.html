@@ -1,3 +1,7 @@
+<button *appHasRole="['admin']" (click)="openCreate()" class="px-4 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-200 hover:bg-zinc-800 transition">
+  + Nuevo producto
+</button>
+
 <!-- Search -->
 <div class="mt-4">
   <input
@@ -33,6 +37,7 @@
 
     <div class="col-span-2 text-right space-x-2">
       <button
+      (click)="openEdit(p)"
         *appHasRole="['admin']"
         class="px-3 py-1 rounded-lg bg-zinc-950 border border-zinc-800 text-zinc-200 text-sm hover:bg-zinc-800 transition"
       >
@@ -40,6 +45,7 @@
       </button>
 
       <button
+      (click)="productDelete(p)"
         *appHasRole="['admin']"
         class="px-3 py-1 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300 text-sm hover:bg-rose-500/20 transition"
       >
@@ -76,5 +82,155 @@
     >
       Siguiente
     </button>
+  </div>
+</div>
+<div *ngIf="isCreateOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
+  <div class="w-full max-w-lg rounded-2xl border border-zinc-800 bg-zinc-950 p-5">
+    <div class="flex items-center justify-between">
+      <h2 class="text-lg font-semibold text-zinc-100">Nuevo producto</h2>
+      <button (click)="closeCreate()" class="text-zinc-400 hover:text-zinc-100">✕</button>
+    </div>
+
+    <form class="mt-4 space-y-4" [formGroup]="createForm" (ngSubmit)="submitCreate()">
+      <div>
+        <label class="block text-sm text-zinc-300 mb-1">Nombre</label>
+        <input formControlName="name"
+          class="w-full rounded-xl bg-zinc-900 border border-zinc-800 px-4 py-3 text-zinc-100" />
+        <p *ngIf="createForm.controls.name.touched && createForm.controls.name.invalid" class="mt-1 text-sm text-rose-300">
+          Requerido (2 a 100 caracteres).
+        </p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-sm text-zinc-300 mb-1">Precio</label>
+          <input type="number" step="0.01" formControlName="price"
+            class="w-full rounded-xl bg-zinc-900 border border-zinc-800 px-4 py-3 text-zinc-100" />
+          <p *ngIf="createForm.controls.price.touched && createForm.controls.price.invalid" class="mt-1 text-sm text-rose-300">
+            Debe ser mayor a 0.
+          </p>
+        </div>
+
+        <div>
+          <label class="block text-sm text-zinc-300 mb-1">Stock</label>
+          <input type="number" step="1" formControlName="stock"
+            class="w-full rounded-xl bg-zinc-900 border border-zinc-800 px-4 py-3 text-zinc-100" />
+          <p *ngIf="createForm.controls.stock.touched && createForm.controls.stock.invalid" class="mt-1 text-sm text-rose-300">
+            Debe ser 0 o mayor.
+          </p>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2">
+        <button type="button" (click)="closeCreate()"
+          class="rounded-xl bg-zinc-900 border border-zinc-800 px-4 py-2 text-zinc-200 hover:bg-zinc-800">
+          Cancelar
+        </button>
+        <button type="submit" [disabled]="loading"
+          class="rounded-xl bg-amber-600 hover:bg-amber-500 px-4 py-2 font-semibold text-zinc-950 disabled:opacity-50">
+          Guardar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+<div *ngIf="isEditOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
+  <div class="w-full max-w-lg rounded-2xl border border-zinc-800 bg-zinc-950 p-5">
+    <div class="flex items-center justify-between">
+      <h2 class="text-lg font-semibold text-zinc-100">Editar producto</h2>
+      <button (click)="closeEdit()" class="text-zinc-400 hover:text-zinc-100">✕</button>
+    </div>
+
+    <form class="mt-4 space-y-4" [formGroup]="editForm" (ngSubmit)="submitEdit()">
+      <div>
+        <label class="block text-sm text-zinc-300 mb-1">Nombre</label>
+        <input formControlName="name"
+          class="w-full rounded-xl bg-zinc-900 border border-zinc-800 px-4 py-3 text-zinc-100" />
+        <p *ngIf="editForm.controls.name.touched && editForm.controls.name.invalid" class="mt-1 text-sm text-rose-300">
+          Requerido (2 a 100 caracteres).
+        </p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-sm text-zinc-300 mb-1">Precio</label>
+          <input type="number" step="0.01" formControlName="price"
+            class="w-full rounded-xl bg-zinc-900 border border-zinc-800 px-4 py-3 text-zinc-100" />
+          <p *ngIf="editForm.controls.price.touched && editForm.controls.price.invalid" class="mt-1 text-sm text-rose-300">
+            Debe ser mayor a 0.
+          </p>
+        </div>
+
+        <div>
+          <label class="block text-sm text-zinc-300 mb-1">Stock</label>
+          <input type="number" step="1" formControlName="stock"
+            class="w-full rounded-xl bg-zinc-900 border border-zinc-800 px-4 py-3 text-zinc-100" />
+          <p *ngIf="editForm.controls.stock.touched && editForm.controls.stock.invalid" class="mt-1 text-sm text-rose-300">
+            Debe ser 0 o mayor.
+          </p>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2">
+        <button type="button" (click)="closeEdit()"
+          class="rounded-xl bg-zinc-900 border border-zinc-800 px-4 py-2 text-zinc-200 hover:bg-zinc-800">
+          Cancelar
+        </button>
+        <button type="submit" [disabled]="loading"
+          class="rounded-xl bg-amber-600 hover:bg-amber-500 px-4 py-2 font-semibold text-zinc-950 disabled:opacity-50">
+          Actualizar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+<div *ngIf="isEditOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
+  <div class="w-full max-w-lg rounded-2xl border border-zinc-800 bg-zinc-950 p-5">
+    <div class="flex items-center justify-between">
+      <h2 class="text-lg font-semibold text-zinc-100">Editar producto</h2>
+      <button (click)="closeEdit()" class="text-zinc-400 hover:text-zinc-100">✕</button>
+    </div>
+
+    <form class="mt-4 space-y-4" [formGroup]="editForm" (ngSubmit)="submitEdit()">
+      <div>
+        <label class="block text-sm text-zinc-300 mb-1">Nombre</label>
+        <input formControlName="name"
+          class="w-full rounded-xl bg-zinc-900 border border-zinc-800 px-4 py-3 text-zinc-100" />
+        <p *ngIf="editForm.controls.name.touched && editForm.controls.name.invalid" class="mt-1 text-sm text-rose-300">
+          Requerido (2 a 100 caracteres).
+        </p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-sm text-zinc-300 mb-1">Precio</label>
+          <input type="number" step="0.01" formControlName="price"
+            class="w-full rounded-xl bg-zinc-900 border border-zinc-800 px-4 py-3 text-zinc-100" />
+          <p *ngIf="editForm.controls.price.touched && editForm.controls.price.invalid" class="mt-1 text-sm text-rose-300">
+            Debe ser mayor a 0.
+          </p>
+        </div>
+
+        <div>
+          <label class="block text-sm text-zinc-300 mb-1">Stock</label>
+          <input type="number" step="1" formControlName="stock"
+            class="w-full rounded-xl bg-zinc-900 border border-zinc-800 px-4 py-3 text-zinc-100" />
+          <p *ngIf="editForm.controls.stock.touched && editForm.controls.stock.invalid" class="mt-1 text-sm text-rose-300">
+            Debe ser 0 o mayor.
+          </p>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2">
+        <button type="button" (click)="closeEdit()"
+          class="rounded-xl bg-zinc-900 border border-zinc-800 px-4 py-2 text-zinc-200 hover:bg-zinc-800">
+          Cancelar
+        </button>
+        <button type="submit" [disabled]="loading"
+          class="rounded-xl bg-amber-600 hover:bg-amber-500 px-4 py-2 font-semibold text-zinc-950 disabled:opacity-50">
+          Actualizar
+        </button>
+      </div>
+    </form>
   </div>
 </div>
