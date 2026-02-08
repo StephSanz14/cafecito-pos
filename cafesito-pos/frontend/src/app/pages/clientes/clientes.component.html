@@ -7,100 +7,61 @@
     </p>
   </div>
 
-  <!-- Seller + Admin -->
+  <!-- Seller + Admin (porque POST /customers lo permite) -->
   <button
-    *appHasRole="['admin', 'seller']"
-    (click)="openCreateModal()"
+    *appHasRole="['admin','seller']"
     class="rounded-xl bg-amber-600 hover:bg-amber-500 text-zinc-950 font-semibold px-4 py-2 transition"
   >
     + Nuevo cliente
   </button>
 </div>
 
-<!-- Search  -->
-<input
-  class="w-full rounded-xl bg-zinc-900 border border-zinc-800 px-4 py-3 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500/30"
-  placeholder="Buscar cliente por nombre o teléfono/correo..."
-  (input)="filterCustomers($any($event.target).value)"
-/>
-
-<!-- Error state -->
-<div
-  *ngIf="errorMsg"
-  class="mt-4 rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-rose-200"
->
-  <div class="flex items-center justify-between gap-3">
-    <span>{{ errorMsg }}</span>
-    <button
-      (click)="loadCustomers()"
-      class="rounded-lg border border-rose-500/30 bg-rose-500/10 px-3 py-1 text-sm hover:bg-rose-500/20 transition"
-    >
-      Reintentar
-    </button>
-  </div>
+<!-- Search -->
+<div class="mt-4">
+  <input
+    class="w-full rounded-xl bg-zinc-900 border border-zinc-800 px-4 py-3 text-zinc-100 placeholder-zinc-500"
+    placeholder="Buscar cliente por nombre o teléfono/correo..."
+  />
 </div>
 
 <!-- Table -->
-<div
-  class="mt-4 bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden"
->
+<div class="mt-4 bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden">
+
   <!-- Header -->
-  <div
-    class="grid grid-cols-12 px-4 py-3 text-xs text-zinc-400 border-b border-zinc-800"
-  >
-    <div class="col-span-4">Nombre</div>
+  <div class="grid grid-cols-12 px-4 py-3 text-xs text-zinc-400 border-b border-zinc-800">
+    <div class="col-span-5">Nombre</div>
     <div class="col-span-5">Teléfono / Correo</div>
-    <div class="col-span-1 text-right">Compras</div>
     <div class="col-span-2 text-right">Acciones</div>
   </div>
 
-  <!-- Loading state -->
-  <div *ngIf="loading" class="px-4 py-10 text-center text-zinc-400">
-    Cargando clientes...
-  </div>
-
-  <!-- Empty state -->
-  <div
-    *ngIf="!loading && !errorMsg && customers.length === 0"
-    class="px-4 py-10 text-center text-zinc-400"
-  >
-    No hay clientes registrados
-  </div>
-
-  <div
-    *ngFor="let c of filteredCustomers"
-    class="grid grid-cols-12 px-4 py-3 items-center border-b border-zinc-800 hover:bg-zinc-800/40 transition"
-  >
-    <!-- Nombre -->
-    <div class="col-span-4 text-zinc-100 font-medium">
-      {{ c.name }}
+  <!-- Row mock (luego será *ngFor) -->
+  <div class="grid grid-cols-12 px-4 py-3 items-center border-b border-zinc-800 hover:bg-zinc-800/40">
+    <div class="col-span-5 text-zinc-100">
+      Luis Antonio Moreno
     </div>
 
-    <!-- Teléfono / Correo -->
     <div class="col-span-5 text-zinc-200">
-      {{ c.phoneOrEmail }}
+      +52 449 997 3850
     </div>
 
-    <!-- Compras -->
-    <div class="col-span-1 text-right">
-      <span
-        class="inline-flex min-w-7 items-center justify-center rounded-full border border-zinc-800 bg-zinc-950 px-2 py-1 text-xs text-zinc-200"
-      >
-        {{ c.purchasesCount ?? 0 }}
-      </span>
-    </div>
-
-    <!-- Acciones -->
     <div class="col-span-2 text-right">
+      <!-- Seller + Admin (GET /customers/:id lo permite) -->
       <button
-        *appHasRole="['admin', 'seller']"
-        (click)="openCustomerModal(c.id)"
+        *appHasRole="['admin','seller']"
         class="px-3 py-1 rounded-lg bg-zinc-950 border border-zinc-800 text-zinc-200 text-sm hover:bg-zinc-800 transition"
       >
         Ver
       </button>
     </div>
   </div>
+
+  <!-- Empty state -->
+  <!--
+  <div class="px-4 py-10 text-center text-zinc-400">
+    No hay clientes registrados
+  </div>
+  -->
+
 </div>
 
 @if (isModalOpen) {

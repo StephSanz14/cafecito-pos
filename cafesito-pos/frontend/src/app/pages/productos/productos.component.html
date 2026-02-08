@@ -1,16 +1,35 @@
+
+
+<!-- Header -->
 <div class="flex items-center justify-between">
-  <h1 class="text-2xl font-bold text-zinc-100">Productos</h1>
-  <button class="rounded-xl bg-amber-600 hover:bg-amber-500 text-zinc-950 font-semibold px-4 py-2">
+  <div>
+    <h1 class="text-2xl font-bold text-zinc-100">Productos</h1>
+    <p class="text-sm text-zinc-400">
+      Consulta el inventario disponible
+    </p>
+  </div>
+
+  <!-- Admin only -->
+  <button 
+    *appHasRole="['admin']"
+    class="rounded-xl bg-amber-600 hover:bg-amber-500 text-zinc-950 font-semibold px-4 py-2 transition">
     + Nuevo producto
   </button>
 </div>
 
+<!-- Search -->
 <div class="mt-4">
-  <input class="w-full rounded-xl bg-zinc-900 border border-zinc-800 px-4 py-3 text-zinc-100"
-         placeholder="Buscar producto..." />
+  <input
+    [(ngModel)]="q"
+    name="q"
+    class="w-full rounded-xl bg-zinc-900 border border-zinc-800 px-4 py-3 text-zinc-100 placeholder-zinc-500"
+    placeholder="Buscar producto..." />
 </div>
 
+<!-- Table -->
 <div class="mt-4 bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden">
+
+  <!-- Header -->
   <div class="grid grid-cols-12 px-4 py-3 text-xs text-zinc-400 border-b border-zinc-800">
     <div class="col-span-6">Nombre</div>
     <div class="col-span-2 text-right">Precio</div>
@@ -18,16 +37,35 @@
     <div class="col-span-2 text-right">Acciones</div>
   </div>
 
-  <div class="grid grid-cols-12 px-4 py-3 items-center border-b border-zinc-800">
-    <div class="col-span-6 text-zinc-100">Café Americano</div>
-    <div class="col-span-2 text-right text-zinc-200">$35.00</div>
-    <div class="col-span-2 text-right">
-      <span class="px-2 py-1 text-xs rounded-full bg-emerald-500/10 text-emerald-400">OK</span>
-    </div>
+  <!-- Row (mock, luego será *ngFor) -->
+  <div 
+  *ngFor="let p of filteredProducts"
+  class="grid grid-cols-12 px-4 py-3 items-center border-b border-zinc-800 hover:bg-zinc-800/40">
+  <div class="col-span-6 text-zinc-100">{{ p.name }}</div>
+  <div class="col-span-2 text-right text-zinc-200">{{ p.price | currency:'MXN' }}</div>
+   <div class="col-span-2 text-right text-zinc-200">{{ p.stock }}</div>
+
     <div class="col-span-2 text-right space-x-2">
-      <button class="px-3 py-1 rounded-lg bg-zinc-950 border border-zinc-800 text-zinc-200 text-sm">Editar</button>
-      <button class="px-3 py-1 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300 text-sm">Eliminar</button>
+      <!-- Admin only -->
+      <button
+        *appHasRole="['admin']"
+        class="px-3 py-1 rounded-lg bg-zinc-950 border border-zinc-800 text-zinc-200 text-sm hover:bg-zinc-800 transition">
+        Editar
+      </button>
+
+      <button
+        *appHasRole="['admin']"
+        class="px-3 py-1 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300 text-sm hover:bg-rose-500/20 transition">
+        Eliminar
+      </button>
     </div>
   </div>
-</div>
 
+  <!-- Empty state (cuando no haya productos) -->
+  <!--
+  <div class="px-4 py-10 text-center text-zinc-400">
+    No hay productos registrados
+  </div>
+  -->
+
+</div>
