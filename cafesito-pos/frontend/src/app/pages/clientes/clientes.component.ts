@@ -1,10 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { HasRoleDirective } from '../../core/directives/hasrole.directive';
+import { Customer } from '../../core/types/Customer';
+import { CustomerService } from '../../core/services/customer/customer.service';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-clientes',
-  imports: [CommonModule, HasRoleDirective],
+  imports: [CommonModule, HasRoleDirective, ReactiveFormsModule],
   templateUrl: './clientes.component.html',
   styleUrl: './clientes.component.css'
 })
