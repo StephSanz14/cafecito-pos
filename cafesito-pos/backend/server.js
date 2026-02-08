@@ -1,6 +1,11 @@
 import dotenv from 'dotenv'; // Importa dotenv para manejar variables de entorno
 dotenv.config(); // Carga las variables de entorno desde el archivo .env
-
+import setupGlobalErrorHandlers from './src/middlewares/globalErrorHandler.js';
+setupGlobalErrorHandlers(); // Configura los manejadores globales de errores para capturar excepciones no controladas y rechazos no manejados
+console.log("JWT_SECRET loaded?", !!process.env.JWT_SECRET);
+console.log("JWT_REFRESH_SECRET loaded?", !!process.env.JWT_REFRESH_SECRET);
+import { initializeData } from "./src/config/initializeData.js";
+import routes from './src/routes/index.js'; // Importa las rutas definidas en la aplicación
 import express from 'express'; // Importa el framework Express para crear el servidor web
 import dbConnection from './src/config/database.js'; // Importa la configuración de la base de datos
 import cors from 'cors'; // Importa CORS para manejar solicitudes entre diferentes orígenes
