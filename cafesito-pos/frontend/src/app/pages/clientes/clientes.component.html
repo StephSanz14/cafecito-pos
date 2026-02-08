@@ -1,29 +1,310 @@
+<!-- Header -->
 <div class="flex items-center justify-between">
-  <h1 class="text-2xl font-bold text-zinc-100">Clientes</h1>
-  <button class="rounded-xl bg-amber-600 hover:bg-amber-500 text-zinc-950 font-semibold px-4 py-2">
+  <div>
+    <h1 class="text-2xl font-bold text-zinc-100">Clientes</h1>
+    <p class="text-sm text-zinc-400">
+      Lista de clientes registrados (solo usuarios con sesión)
+    </p>
+  </div>
+
+  <!-- Seller + Admin -->
+  <button
+    *appHasRole="['admin', 'seller']"
+    (click)="openCreateModal()"
+    class="rounded-xl bg-amber-600 hover:bg-amber-500 text-zinc-950 font-semibold px-4 py-2 transition"
+  >
     + Nuevo cliente
   </button>
 </div>
 
-<div class="mt-4">
-  <input class="w-full rounded-xl bg-zinc-900 border border-zinc-800 px-4 py-3 text-zinc-100"
-         placeholder="Buscar por teléfono o correo..." />
+<!-- Search  -->
+<input
+  class="w-full rounded-xl bg-zinc-900 border border-zinc-800 px-4 py-3 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500/30"
+  placeholder="Buscar cliente por nombre o teléfono/correo..."
+  (input)="filterCustomers($any($event.target).value)"
+/>
+
+<!-- Error state -->
+<div
+  *ngIf="errorMsg"
+  class="mt-4 rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-rose-200"
+>
+  <div class="flex items-center justify-between gap-3">
+    <span>{{ errorMsg }}</span>
+    <button
+      (click)="loadCustomers()"
+      class="rounded-lg border border-rose-500/30 bg-rose-500/10 px-3 py-1 text-sm hover:bg-rose-500/20 transition"
+    >
+      Reintentar
+    </button>
+  </div>
 </div>
 
-<div class="mt-4 bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden">
-  <div class="grid grid-cols-12 px-4 py-3 text-xs text-zinc-400 border-b border-zinc-800">
+<!-- Table -->
+<div
+  class="mt-4 bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden"
+>
+  <!-- Header -->
+  <div
+    class="grid grid-cols-12 px-4 py-3 text-xs text-zinc-400 border-b border-zinc-800"
+  >
     <div class="col-span-4">Nombre</div>
-    <div class="col-span-5">Teléfono/Correo</div>
+    <div class="col-span-5">Teléfono / Correo</div>
     <div class="col-span-1 text-right">Compras</div>
-    <div class="col-span-2 text-right">Acción</div>
+    <div class="col-span-2 text-right">Acciones</div>
   </div>
 
-  <div class="grid grid-cols-12 px-4 py-3 items-center border-b border-zinc-800">
-    <div class="col-span-4 text-zinc-100">Ana López</div>
-    <div class="col-span-5 text-zinc-300">4491234567</div>
-    <div class="col-span-1 text-right text-zinc-200">5</div>
+  <!-- Loading state -->
+  <div *ngIf="loading" class="px-4 py-10 text-center text-zinc-400">
+    Cargando clientes...
+  </div>
+
+  <!-- Empty state -->
+  <div
+    *ngIf="!loading && !errorMsg && customers.length === 0"
+    class="px-4 py-10 text-center text-zinc-400"
+  >
+    No hay clientes registrados
+  </div>
+
+  <div
+    *ngFor="let c of filteredCustomers"
+    class="grid grid-cols-12 px-4 py-3 items-center border-b border-zinc-800 hover:bg-zinc-800/40 transition"
+  >
+    <!-- Nombre -->
+    <div class="col-span-4 text-zinc-100 font-medium">
+      {{ c.name }}
+    </div>
+
+    <!-- Teléfono / Correo -->
+    <div class="col-span-5 text-zinc-200">
+      {{ c.phoneOrEmail }}
+    </div>
+
+    <!-- Compras -->
+    <div class="col-span-1 text-right">
+      <span
+        class="inline-flex min-w-7 items-center justify-center rounded-full border border-zinc-800 bg-zinc-950 px-2 py-1 text-xs text-zinc-200"
+      >
+        {{ c.purchasesCount ?? 0 }}
+      </span>
+    </div>
+
+    <!-- Acciones -->
     <div class="col-span-2 text-right">
-      <button class="px-3 py-1 rounded-lg bg-zinc-950 border border-zinc-800 text-zinc-200 text-sm">Ver</button>
+      <button
+        *appHasRole="['admin', 'seller']"
+        (click)="openCustomerModal(c.id)"
+        class="px-3 py-1 rounded-lg bg-zinc-950 border border-zinc-800 text-zinc-200 text-sm hover:bg-zinc-800 transition"
+      >
+        Ver
+      </button>
     </div>
   </div>
 </div>
+
+@if (isModalOpen) {
+  <!-- Backdrop -->
+  <div
+    class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+    (click)="closeModal()"
+  ></div>
+
+  <!-- Dialog -->
+  <div class="fixed inset-0 z-50 grid place-items-center p-4">
+    <div
+      class="w-full max-w-lg rounded-2xl border border-zinc-800 bg-zinc-950 text-zinc-100 shadow-[0_30px_90px_-40px_rgba(0,0,0,0.9)]"
+      (click)="$event.stopPropagation()"
+    >
+      <!-- Modal header -->
+      <div
+        class="flex items-start justify-between gap-4 border-b border-zinc-800 px-5 py-4"
+      >
+        <div>
+          <h2 class="text-lg font-semibold">Detalle del cliente</h2>
+          <p class="text-sm text-zinc-400">Información y total de compras</p>
+        </div>
+
+        <button
+          (click)="closeModal()"
+          class="rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-1 text-sm text-zinc-200 hover:bg-zinc-800 transition"
+        >
+          Cerrar
+        </button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="px-5 py-4">
+        @if (modalLoading) {
+          <div class="py-10 text-center text-zinc-400">Cargando...</div>
+        } @else if (modalError) {
+          <div
+            class="rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-rose-200"
+          >
+            {{ modalError }}
+          </div>
+        } @else if (selectedCustomer) {
+          <div class="space-y-4">
+            <div
+              class="rounded-xl border border-zinc-800 bg-zinc-900/40 px-4 py-3"
+            >
+              <p class="text-xs text-zinc-400">Nombre</p>
+              <p class="text-base font-semibold text-zinc-100">
+                {{ selectedCustomer.name }}
+              </p>
+            </div>
+
+            <div
+              class="rounded-xl border border-zinc-800 bg-zinc-900/40 px-4 py-3"
+            >
+              <p class="text-xs text-zinc-400">Teléfono / Correo</p>
+              <p class="text-base text-zinc-100">
+                {{ selectedCustomer.phoneOrEmail }}
+              </p>
+            </div>
+
+            <div
+              class="rounded-xl border border-zinc-800 bg-zinc-900/40 px-4 py-3 flex items-center justify-between"
+            >
+              <div>
+                <p class="text-xs text-zinc-400">Compras</p>
+                <p class="text-base text-zinc-100">Total registradas</p>
+              </div>
+
+              <span
+                class="inline-flex items-center rounded-full bg-amber-500/10 border border-amber-500/20 px-3 py-1 text-sm text-amber-300 font-semibold"
+              >
+                {{ selectedCustomer.purchasesCount ?? 0 }}
+              </span>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Modal footer -->
+      <div class="flex justify-end gap-2 border-t border-zinc-800 px-5 py-4">
+        <button
+          (click)="closeModal()"
+          class="rounded-lg border border-zinc-800 bg-zinc-900 px-4 py-2 text-sm text-zinc-200 hover:bg-zinc-800 transition"
+        >
+          Listo
+        </button>
+      </div>
+    </div>
+  </div>
+}
+@if (isCreateOpen) {
+  <!-- Backdrop -->
+  <div
+    class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+    (click)="closeCreateModal()"
+  ></div>
+
+  <!-- Dialog -->
+  <div class="fixed inset-0 z-50 grid place-items-center p-4">
+    <div
+      class="w-full max-w-lg rounded-2xl border border-zinc-800 bg-zinc-950 text-zinc-100"
+      (click)="$event.stopPropagation()"
+    >
+      <!-- Header -->
+      <div
+        class="flex items-start justify-between gap-4 border-b border-zinc-800 px-5 py-4"
+      >
+        <div>
+          <h2 class="text-lg font-semibold">Nuevo cliente</h2>
+          <p class="text-sm text-zinc-400">
+            Crea un cliente para registrar ventas
+          </p>
+        </div>
+
+        <button
+          (click)="closeCreateModal()"
+          class="rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-1 text-sm text-zinc-200 hover:bg-zinc-800 transition"
+        >
+          Cerrar
+        </button>
+      </div>
+
+      <!-- Body -->
+      <div class="px-5 py-4 space-y-4">
+        @if (createError) {
+          <div
+            class="rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-rose-200"
+          >
+            {{ createError }}
+          </div>
+        }
+        <form [formGroup]="createForm" class="space-y-4">
+          <div class="space-y-1">
+            <label class="text-xs text-zinc-400">Nombre</label>
+            <input
+              formControlName="name"
+              class="w-full rounded-xl bg-zinc-900 border border-zinc-800 px-4 py-3 text-zinc-100"
+              placeholder="Ingrese el nombre del cliente"
+            />
+            @if (
+              createForm.get("name")?.touched && createForm.get("name")?.errors
+            ) {
+              <p class="text-xs text-rose-400">
+                @if (createForm.get("name")?.errors?.["required"]) {
+                  El nombre es obligatorio
+                }
+                @if (createForm.get("name")?.errors?.["minlength"]) {
+                  Debe tener al menos 2 caracteres
+                }
+                @if (createForm.get("name")?.errors?.["maxlength"]) {
+                  Máximo 100 caracteres
+                }
+              </p>
+            }
+          </div>
+
+          <div class="space-y-1">
+            <label class="text-xs text-zinc-400">Teléfono o correo</label>
+            <input
+              formControlName="phoneOrEmail"
+              class="w-full rounded-xl bg-zinc-900 border border-zinc-800 px-4 py-3 text-zinc-100"
+              placeholder="Teléfono o correo"
+            />
+            @if (
+              createForm.get("phoneOrEmail")?.touched &&
+              createForm.get("phoneOrEmail")?.errors
+            ) {
+              <p class="text-xs text-rose-400">
+                @if (createForm.get("phoneOrEmail")?.errors?.["required"]) {
+                  Este campo es obligatorio
+                }
+                @if (createForm.get("phoneOrEmail")?.errors?.["pattern"]) {
+                  Ingresa un correo válido o un teléfono con + y 12 dígitos
+                }
+              </p>
+            }
+          </div>
+        </form>
+      </div>
+
+      <!-- Footer -->
+      <div class="flex justify-end gap-2 border-t border-zinc-800 px-5 py-4">
+        <button
+          (click)="closeCreateModal()"
+          class="rounded-lg border border-zinc-800 bg-zinc-900 px-4 py-2 text-sm text-zinc-200 hover:bg-zinc-800 transition"
+          [disabled]="createLoading"
+        >
+          Cancelar
+        </button>
+
+        <button
+          (click)="submitCreate()"
+          class="rounded-lg bg-amber-600 px-4 py-2 text-sm font-semibold text-zinc-950 hover:bg-amber-500 transition disabled:opacity-60 disabled:cursor-not-allowed"
+          [disabled]="createLoading"
+        >
+          @if (createLoading) {
+            Guardando...
+          } @else {
+            Crear cliente
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}

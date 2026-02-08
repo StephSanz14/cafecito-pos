@@ -1,4 +1,4 @@
-import {Customer} from "../models/customer.js";
+import Customer from "../models/customer.js";
 
 async function getCustomers(req, res, next) {
   try {
@@ -9,11 +9,11 @@ async function getCustomers(req, res, next) {
     const customers = await Customer.find().skip(skip).limit(parseInt(limit));
     const totalResults = await Customer.countDocuments();
     const totalPages = Math.ceil(totalResults / limit);
-    res.status(200).json({
+    res.json({
       data: customers.map((customer) => ({
         id: customer._id,
         name: customer.name,
-        phoneOrEmail: customer.phoneOrEmail,
+        phoneoremail: customer.phoneOrEmail,
         purchasesCount: customer.purchasesCount,
         createdAt: customer.createdAt,
         updatedAt: customer.updatedAt,
@@ -35,72 +35,79 @@ async function createCustomer(req, res, next) {
     const { name, phoneOrEmail } = req.body;
     const errors = [];
 
-    //Hacemos las validaciones
-    if (typeof name !== "string" || name.trim() === "") {
+    if (!name) {
       errors.push({ field: "name", message: "Name is required" });
     } else if (name.trim().length < 2 || name.trim().length > 100) {
-      errors.push({ field: "name", message: "Name must be between 2 and 100 characters" });
-    }
-
-    if (typeof phoneOrEmail !== "string" || phoneOrEmail.trim() === "") {
-      errors.push({ field: "phoneOrEmail", message: "Phone or Email is required" });
-    } else {
-      const value = phoneOrEmail.trim();
-      const isEmail = value.includes("@");
-      const isIntlPhone = /^\+[0-9]{10,15}$/.test(value);
-
-      if (isEmail) {
-        const looksLikeEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-        if (!looksLikeEmail) {
-          errors.push({ field: "phoneOrEmail", message: "Must be a valid email (user@example.com)" });
-        } else if (value.length < 5 || value.length > 100) {
-          errors.push({ field: "phoneOrEmail", message: "Email must be between 5 and 100 characters" });
-        }
-      } else {
-        if (!isIntlPhone) {
-          errors.push({
-            field: "phoneOrEmail",
-            message: "Phone must start with + and contain only digits (10 to 15 numbers)",
-          });
-        }
-      }
-    }
-
-    if (errors.length > 0) {
-      return res.status(422).json({ error: "Validation failed", details: errors });
-    }
-
-    const normalized = phoneOrEmail.trim(); // Normalizamos el valor
-
-    // Verificamos si ya existe un cliente con el mismo phoneOrEmail
-    const existingCustomer = await Customer.findOne({ phoneOrEmail: normalized });
-    if (existingCustomer) {
-      return res.status(409).json({
-        error: "Customer with the same Phone or Email already exists",
-        details: [{ field: "phoneOrEmail", message: "A customer with the same Phone or Email already exists" }],
+      errors.push({
+        field: "name",
+        message: "Name must be between 2 and 100 characters",
       });
     }
 
-    // Creamos el nuevo cliente
-    const newCustomer = await Customer.create({
-      name: name.trim(),
-      phoneOrEmail: normalized,
-      role: "customer",
-    });
+    if (
+      phoneOrEmail === undefined ||
+      phoneOrEmail === null ||
+      String(phoneOrEmail).trim() === ""
+    ) {
+      errors.push({
+        field: "phoneOrEmail",
+        message: "Phone or Email is required",
+      });
+    } else if (typeof phoneOrEmail !== "string") {
+      errors.push({
+        field: "phoneOrEmail",
+        message: "Phone or Email must be a string",
+      });
+    }
+    const isEmail = value.includes("@"); // validación básica para decidir camino
+    const isIntlPhone = /^\+[0-9]{10,15}$/.test(value); // + y solo dígitos
 
-    return res.status(201).json({
-      id: newCustomer._id,
-      name: newCustomer.name,
-      phoneOrEmail: newCustomer.phoneOrEmail,
-      purchasesCount: newCustomer.purchasesCount,
-      createdAt: newCustomer.createdAt,
-      updatedAt: newCustomer.updatedAt,
-    });
+    if (isEmail) {
+      // validación básica de email (suficiente para MVP)
+      const looksLikeEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+
+      if (!looksLikeEmail) {
+        errors.push({ field: "phoneOrEmail", message: "Must be a valid email (user@example.com)" });
+      } else if (value.length < 5 || value.length > 100) {
+        errors.push({
+          field: "phoneOrEmail",
+          message: "Email must be between 5 and 100 characters",
+        });
+      }
+    } else {
+      // no parece email → debe ser teléfono internacional
+      if (!isIntlPhone) {
+        errors.push({
+          field: "phoneOrEmail",
+          message:
+            "Phone must start with + and contain only digits (10 to 15 numbers)",
+        });
+      }
+    }
+    if (errors.length > 0) {
+      return res.status(422).json({
+        error: "Validation failed",
+        details: errors,
+      });
+    }
+
+    //validar que no exista otro cliente con mismo phoneOrEmail
+    const existingCustomer = await Customer.findOne({ phoneOrEmail: phoneOrEmail });
+    if (existingCustomer) {
+      return res.status(400).json({
+        error: "Customer with the same Phone or Email already exists",
+        details: [
+          {
+            field: "phoneOrEmail",
+            message: "A customer with the same Phone or Email already exists",
+          },
+        ],
+      });
+    }
   } catch (error) {
     next(error);
   }
 }
-
 
 async function getCustomerById(req, res, next) {
   try {

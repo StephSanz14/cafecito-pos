@@ -1,5 +1,7 @@
 import dotenv from 'dotenv'; // Importa dotenv para manejar variables de entorno
 dotenv.config(); // Carga las variables de entorno desde el archivo .env
+import setupGlobalErrorHandlers from './src/middlewares/globalErrorHandler.js';
+setupGlobalErrorHandlers(); // Configura los manejadores globales de errores para capturar excepciones no controladas y rechazos no manejados
 console.log("JWT_SECRET loaded?", !!process.env.JWT_SECRET);
 console.log("JWT_REFRESH_SECRET loaded?", !!process.env.JWT_REFRESH_SECRET);
 import { initializeData } from "./src/config/initializeData.js";
@@ -37,11 +39,10 @@ app.use((req, res) => {
 
 if (process.env.INITIAL_DATA === "development") {
   console.log("INITIAL_DATA enabled, but no seed implemented yet");
-  initializeData(); // Inicializa los datos predeterminados en la base de datos
 }
 
 const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`); 
+  console.log(`Server running on http://localhost:${PORT}`);
 }); // Inicia el servidor en el puerto definido en las variables de entorno 
