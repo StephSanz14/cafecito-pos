@@ -1,7 +1,7 @@
 import { environment } from '../../../../environments/environment';
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs';
+import { map, tap } from 'rxjs';
 import {
   LoginRequest,
   LoginResponseSchema,
@@ -15,10 +15,13 @@ export class AuthService {
   private readonly baseUrl = environment.BACK_URL;
 
   login(payload: LoginRequest) {
-    return this.http
-      .post<unknown>(`${this.baseUrl}/auth/login`, payload)
-      .pipe(map((res) => LoginResponseSchema.parse(res)));
-  }
+  return this.http
+    .post<any>(`${this.baseUrl}/auth/login`, payload)
+    .pipe(
+      tap((raw) => console.log('RAW LOGIN RESPONSE:', raw)),
+      map((raw) => LoginResponseSchema.parse(raw))
+    );
+}
 
   registerSeller(payload: RegisterRequest) {
     return this.http.post(`${this.baseUrl}/auth/register`, payload);

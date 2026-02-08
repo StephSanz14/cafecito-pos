@@ -7,7 +7,7 @@ async function getProducts(req, res, next) {
     const q = req.query.q || "";
 
     //validar que page sea 1 o mayor
-    if (page < 1) {
+    if (page < 1) { 
       return res.status(400).json({
         error: "Invalid query parameter",
         details: [{ field: "page", message: "page must be a number >= 1" }],

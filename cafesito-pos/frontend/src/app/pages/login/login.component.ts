@@ -41,12 +41,21 @@ export class LoginComponent {
 
     this.auth.login(parsed.data).subscribe({
       next: (res) => {
-        //uardar sesión
-        this.token.setSession(res.token, res.role, res.refreshToken);
-        // ir al shell
-        this.router.navigate(['/ventas']);
-        this.loading = false;
-      },
+  console.log('LOGIN RES =>', res);
+  console.log('token?', res?.token);
+  console.log('refreshToken?', res?.refreshToken);
+  console.log('role?', res?.role);
+
+  this.token.setSession(res.token, res.role, res.refreshToken);
+
+  console.log('LS token after set =>', localStorage.getItem('cafecito_token'));
+  console.log('LS refresh after set =>', localStorage.getItem('cafecito_refresh'));
+  console.log('LS role after set =>', localStorage.getItem('cafecito_role'));
+
+  this.router.navigate(['/ventas']);
+  this.loading = false;
+},
+
       error: (err) => {
         this.error = err?.error?.message || 'No se pudo iniciar sesión';
         this.loading = false;

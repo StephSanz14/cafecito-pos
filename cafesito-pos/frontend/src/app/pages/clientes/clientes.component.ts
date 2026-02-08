@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule } from '@angular/common'; 
 import { Component, OnInit } from '@angular/core';
 import { HasRoleDirective } from '../../core/directives/hasrole.directive';
 import { Customer } from '../../core/types/Customer';

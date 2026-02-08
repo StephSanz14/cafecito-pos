@@ -1,35 +1,21 @@
-
-
-<!-- Header -->
-<div class="flex items-center justify-between">
-  <div>
-    <h1 class="text-2xl font-bold text-zinc-100">Productos</h1>
-    <p class="text-sm text-zinc-400">
-      Consulta el inventario disponible
-    </p>
-  </div>
-
-  <!-- Admin only -->
-  <button 
-    *appHasRole="['admin']"
-    class="rounded-xl bg-amber-600 hover:bg-amber-500 text-zinc-950 font-semibold px-4 py-2 transition">
-    + Nuevo producto
-  </button>
-</div>
-
 <!-- Search -->
 <div class="mt-4">
   <input
-    [(ngModel)]="q"
+    [ngModel]="q"
+    (ngModelChange)="onSearchChange($event)"
     name="q"
     class="w-full rounded-xl bg-zinc-900 border border-zinc-800 px-4 py-3 text-zinc-100 placeholder-zinc-500"
-    placeholder="Buscar producto..." />
+    placeholder="Buscar producto..."
+  />
+</div>
+
+<!-- Error -->
+<div *ngIf="errorMsg" class="mt-4 rounded-xl border border-rose-500/30 bg-rose-500/10 p-3 text-rose-200">
+  {{ errorMsg }}
 </div>
 
 <!-- Table -->
 <div class="mt-4 bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden">
-
-  <!-- Header -->
   <div class="grid grid-cols-12 px-4 py-3 text-xs text-zinc-400 border-b border-zinc-800">
     <div class="col-span-6">Nombre</div>
     <div class="col-span-2 text-right">Precio</div>
@@ -37,35 +23,58 @@
     <div class="col-span-2 text-right">Acciones</div>
   </div>
 
-  <!-- Row (mock, luego será *ngFor) -->
-  <div 
-  *ngFor="let p of filteredProducts"
-  class="grid grid-cols-12 px-4 py-3 items-center border-b border-zinc-800 hover:bg-zinc-800/40">
-  <div class="col-span-6 text-zinc-100">{{ p.name }}</div>
-  <div class="col-span-2 text-right text-zinc-200">{{ p.price | currency:'MXN' }}</div>
-   <div class="col-span-2 text-right text-zinc-200">{{ p.stock }}</div>
+  <div
+    *ngFor="let p of products"
+    class="grid grid-cols-12 px-4 py-3 items-center border-b border-zinc-800 hover:bg-zinc-800/40"
+  >
+    <div class="col-span-6 text-zinc-100">{{ p.name }}</div>
+    <div class="col-span-2 text-right text-zinc-200">{{ p.price | currency:'MXN' }}</div>
+    <div class="col-span-2 text-right text-zinc-200">{{ p.stock }}</div>
 
     <div class="col-span-2 text-right space-x-2">
-      <!-- Admin only -->
       <button
         *appHasRole="['admin']"
-        class="px-3 py-1 rounded-lg bg-zinc-950 border border-zinc-800 text-zinc-200 text-sm hover:bg-zinc-800 transition">
+        class="px-3 py-1 rounded-lg bg-zinc-950 border border-zinc-800 text-zinc-200 text-sm hover:bg-zinc-800 transition"
+      >
         Editar
       </button>
 
       <button
         *appHasRole="['admin']"
-        class="px-3 py-1 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300 text-sm hover:bg-rose-500/20 transition">
+        class="px-3 py-1 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300 text-sm hover:bg-rose-500/20 transition"
+      >
         Eliminar
       </button>
     </div>
   </div>
 
-  <!-- Empty state (cuando no haya productos) -->
-  <!--
-  <div class="px-4 py-10 text-center text-zinc-400">
-    No hay productos registrados
+  <div *ngIf="!loading && products.length === 0" class="px-4 py-10 text-center text-zinc-400">
+    No hay productos
   </div>
-  -->
+</div>
 
+<!-- Pagination -->
+<div class="mt-4 flex items-center justify-between text-sm text-zinc-400">
+  <div>
+    Página <span class="text-zinc-200">{{ page }}</span> de
+    <span class="text-zinc-200">{{ totalPages }}</span> ·
+    <span class="text-zinc-200">{{ total }}</span> productos
+  </div>
+
+  <div class="flex gap-2">
+    <button
+      (click)="prevPage()"
+      [disabled]="page <= 1 || loading"
+      class="px-3 py-1 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-200 disabled:opacity-40"
+    >
+      Anterior
+    </button>
+    <button
+      (click)="nextPage()"
+      [disabled]="page >= totalPages || loading"
+      class="px-3 py-1 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-200 disabled:opacity-40"
+    >
+      Siguiente
+    </button>
+  </div>
 </div>
