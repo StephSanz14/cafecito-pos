@@ -5,7 +5,7 @@ import {Customer} from "../models/customer.js";
 
 const round2 = (n) => Math.round((n + Number.EPSILON) * 100) / 100; // Redondea a 2 decimales
 
-function calculateDiscount(purchasesCount) {
+function calculateDiscount(purchasesCount) { 
   if (!Number.isFinite(purchasesCount) || purchasesCount <= 0) return 0; // Sin descuento isFinite significa que no es NaN ni infinito
   if (purchasesCount >= 1 && purchasesCount <= 3) return 5; // 5% de descuento
   if (purchasesCount >= 4 && purchasesCount <= 7) return 10; // 10% de descuento
@@ -152,49 +152,6 @@ async function createSale(req, res, next) {
     next(error);
   }
 }
-
-/* async function getSales(req, res, next) {
-  try {
-    const sales = await Sale.find().sort({ createdAt: -1 }); // Ordenamos por fecha descendente
-
-    return res.status(200).json(
-      sales.map((sale) => ({
-        saleId: sale.saleId,
-        customerId: sale.customerId,
-        paymentMethod: sale.paymentMethod,
-        items: sale.items.map((it) => ({
-          productId: String(it.productId),
-          productName: it.productNameSnapshot,
-          quantity: it.quantity,
-          unitPrice: it.unitPriceSnapshot,
-          lineTotal: it.lineTotal,
-        })),
-        subtotal: sale.subtotal,
-        discountPercent: sale.discountPercent,
-        discountAmount: sale.discountAmount,
-        total: sale.total,
-        ticket: {
-          saleId: sale.saleId,
-          timestamp: sale.createdAt.toISOString(),
-          storeName: "Cafecito Feliz",
-          items: sale.items.map((it) => ({
-            name: it.productNameSnapshot,
-            qty: it.quantity,
-            unitPrice: it.unitPriceSnapshot,
-            lineTotal: it.lineTotal,
-          })),
-          subtotal: sale.subtotal,
-          discount: `${sale.discountPercent}% (-$${sale.discountAmount.toFixed(2)})`,
-          total: sale.total,
-          paymentMethod: sale.paymentMethod,
-        },
-        createdAt: sale.createdAt,
-      }))
-    );
-  } catch (error) {
-    next(error);
-  }
-} */
 
 async function getSaleById(req, res, next) {
   try {
