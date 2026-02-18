@@ -6,6 +6,8 @@ import { ProductsService } from '../../core/services/products/products.service';
 import { Product } from '../../core/types/Product';
 import { SaleService } from '../../core/services/sales/sale.service';
 import type { PaymentMethod, SaleResponse } from '../../core/types/Sale';
+import { CustomerService } from '../../core/services/customer/customer.service';
+
 
 type CartItem = {
   productId: string;     
@@ -50,7 +52,8 @@ export class VentasComponent implements OnInit {
 
   constructor(
     private productsService: ProductsService,
-    private salesService: SaleService
+    private salesService: SaleService,
+    private customerService: CustomerService,
   ) {}
 
   ngOnInit(): void {
@@ -101,7 +104,6 @@ export class VentasComponent implements OnInit {
 
   // ====== Carrito ======
   addToCart(p: Product) {
-    // ✅ en tu proyecto el id bueno es p.id (NO _id)
     if (!p.id) {
       this.errorMsg = 'Este producto no tiene id.';
       return;

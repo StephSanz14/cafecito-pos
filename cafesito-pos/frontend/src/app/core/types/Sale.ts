@@ -5,7 +5,7 @@ export type PaymentMethod = z.infer<typeof PaymentMethodSchema>;
 
 export const SaleItemRequestSchema = z.object({
   productId: z.string().min(1),
-  quantity: z.number().int().min(1),
+  quantity: z.coerce.number().int().min(1), //coerce para convertir string a number, int para enteros, min(1) para mínimo 1
 });
 export type SaleItemRequest = z.infer<typeof SaleItemRequestSchema>;
 
