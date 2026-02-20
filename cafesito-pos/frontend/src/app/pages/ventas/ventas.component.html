@@ -1,5 +1,4 @@
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
   <!-- IZQUIERDA: Productos -->
   <section class="lg:col-span-2">
     <div class="flex items-center justify-between">
@@ -19,13 +18,20 @@
     </div>
 
     <!-- Error -->
-    <div *ngIf="errorMsg" class="mt-4 rounded-xl border border-rose-500/30 bg-rose-500/10 p-3 text-rose-200">
+    <div
+      *ngIf="errorMsg"
+      class="mt-4 rounded-xl border border-rose-500/30 bg-rose-500/10 p-3 text-rose-200"
+    >
       {{ errorMsg }}
     </div>
 
     <!-- Table -->
-    <div class="mt-4 bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden">
-      <div class="grid grid-cols-12 px-4 py-3 text-xs text-zinc-400 border-b border-zinc-800">
+    <div
+      class="mt-4 bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden"
+    >
+      <div
+        class="grid grid-cols-12 px-4 py-3 text-xs text-zinc-400 border-b border-zinc-800"
+      >
         <div class="col-span-6">Producto</div>
         <div class="col-span-2 text-right">Precio</div>
         <div class="col-span-2 text-right">Stock</div>
@@ -36,7 +42,10 @@
         Cargando productos...
       </div>
 
-      <div *ngIf="!loading && products.length === 0" class="px-4 py-10 text-center text-zinc-400">
+      <div
+        *ngIf="!loading && products.length === 0"
+        class="px-4 py-10 text-center text-zinc-400"
+      >
         No hay productos.
       </div>
 
@@ -46,12 +55,16 @@
         class="grid grid-cols-12 px-4 py-3 items-center border-b border-zinc-800 hover:bg-zinc-800/40"
       >
         <div class="col-span-6 text-zinc-100">{{ p.name }}</div>
-        <div class="col-span-2 text-right text-zinc-200">{{ p.price | currency:'MXN' }}</div>
+        <div class="col-span-2 text-right text-zinc-200">
+          {{ p.price | currency: "MXN" }}
+        </div>
 
-        <div class="col-span-2 text-right"
-             [class.text-emerald-400]="(p.stock ?? 0) >= 6"
-             [class.text-orange-400]="(p.stock ?? 0) > 0 && (p.stock ?? 0) <= 5"
-             [class.text-rose-400]="(p.stock ?? 0) === 0">
+        <div
+          class="col-span-2 text-right"
+          [class.text-emerald-400]="(p.stock ?? 0) >= 6"
+          [class.text-orange-400]="(p.stock ?? 0) > 0 && (p.stock ?? 0) <= 5"
+          [class.text-rose-400]="(p.stock ?? 0) === 0"
+        >
           {{ p.stock }}
         </div>
 
@@ -59,8 +72,7 @@
           <button
             (click)="addToCart(p)"
             [disabled]="(p.stock ?? 0) <= 0"
-            class="px-3 py-1 rounded-lg bg-amber-600 hover:bg-amber-500 disabled:opacity-40
-                   text-zinc-950 font-semibold text-sm transition"
+            class="px-3 py-1 rounded-lg bg-amber-600 hover:bg-amber-500 disabled:opacity-40 text-zinc-950 font-semibold text-sm transition"
           >
             +
           </button>
@@ -97,11 +109,13 @@
 
   <!-- DERECHA: Carrito -->
   <aside class="lg:col-span-1">
-    <div class="sticky top-6 bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
+    <div
+      class="sticky top-6 bg-zinc-900 border border-zinc-800 rounded-2xl p-4"
+    >
       <h2 class="text-lg font-semibold text-zinc-100">Venta actual</h2>
 
       <!-- Cliente opcional -->
-      <div class="mt-4">
+      <!-- <div class="mt-4">
         <label class="text-xs text-zinc-400">Cliente (opcional)</label>
         <input
           [(ngModel)]="customerId"
@@ -111,6 +125,81 @@
         />
         <p class="mt-1 text-[11px] text-zinc-500">
           Luego lo cambiamos por: buscar por teléfono/correo y tomar el id.
+        </p>
+      </div> -->
+
+      <!-- Cliente opcional -->
+      <div class="mt-4">
+        <label class="text-xs text-zinc-400">Cliente (opcional)</label>
+
+        <div class="mt-2 flex gap-2">
+          <input
+            [(ngModel)]="customerQuery"
+            name="customerQuery"
+            class="w-full rounded-xl bg-zinc-950 border border-zinc-800 px-3 py-2 text-zinc-100 placeholder:text-zinc-500"
+            placeholder="Teléfono +52... o correo"
+          />
+
+          <button
+            type="button"
+            (click)="findCustomer()"
+            [disabled]="paying || !customerQuery.trim()"
+            class="shrink-0 rounded-xl bg-zinc-950 border border-zinc-800 px-3 py-2 text-zinc-200 hover:bg-zinc-800 disabled:opacity-40 transition"
+          >
+            Buscar
+          </button>
+        </div>
+
+        <!-- Cliente seleccionado -->
+        <div
+          *ngIf="selectedCustomerId"
+          class="mt-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-2"
+        >
+          <div class="flex items-center justify-between">
+            <div class="text-sm">
+              <p class="text-emerald-200 font-semibold">Cliente asignado</p>
+              <p class="text-zinc-200">{{ selectedCustomerName }}</p>
+              <p class="text-[11px] text-zinc-400">
+                ID: {{ selectedCustomerId }}
+              </p>
+            </div>
+
+            <button
+              type="button"
+              (click)="
+                selectedCustomerId = null;
+                selectedCustomerName = '';
+                customerNotFound = false
+              "
+              [disabled]="paying"
+              class="rounded-lg bg-zinc-950 border border-zinc-800 px-2 py-1 text-xs text-zinc-200 hover:bg-zinc-800 disabled:opacity-40"
+            >
+              Quitar
+            </button>
+          </div>
+        </div>
+
+        <!-- No encontrado -->
+        <div
+          *ngIf="customerNotFound"
+          class="mt-2 rounded-xl border border-rose-500/30 bg-rose-500/10 p-2"
+        >
+          <p class="text-sm text-rose-200">Cliente no encontrado.</p>
+          <p class="text-[11px] text-zinc-400">
+            Puedes cobrar sin cliente o registrarlo después.
+          </p>
+
+          <!-- opcional: si luego abres modal para registrar -->
+          <!--
+    <button type="button" class="mt-2 rounded-xl bg-amber-600 px-3 py-2 text-zinc-950 font-semibold">
+      Registrar cliente
+    </button>
+    -->
+        </div>
+
+        <p class="mt-1 text-[11px] text-zinc-500">
+          Si asignas un cliente, el backend calcula el descuento
+          automáticamente.
         </p>
       </div>
 
@@ -137,21 +226,29 @@
         <div *ngFor="let it of cart" class="flex justify-between">
           <div>
             <p class="text-zinc-100">{{ it.name }}</p>
-            <p class="text-xs text-zinc-400">{{ it.qty }} x {{ it.unitPrice | currency:'MXN' }}</p>
+            <p class="text-xs text-zinc-400">
+              {{ it.qty }} x {{ it.unitPrice | currency: "MXN" }}
+            </p>
           </div>
 
           <div class="text-right">
-            <p class="text-zinc-100">{{ (it.qty * it.unitPrice) | currency:'MXN' }}</p>
+            <p class="text-zinc-100">
+              {{ it.qty * it.unitPrice | currency: "MXN" }}
+            </p>
             <div class="mt-1 flex gap-2 justify-end">
               <button
                 (click)="dec(it)"
                 class="w-7 h-7 rounded-lg bg-zinc-950 border border-zinc-800 text-zinc-200 hover:bg-zinc-800 transition"
-              >-</button>
+              >
+                -
+              </button>
               <button
                 (click)="inc(it)"
                 [disabled]="it.qty >= it.stock"
                 class="w-7 h-7 rounded-lg bg-zinc-950 border border-zinc-800 text-zinc-200 disabled:opacity-40 hover:bg-zinc-800 transition"
-              >+</button>
+              >
+                +
+              </button>
             </div>
           </div>
         </div>
@@ -160,16 +257,15 @@
       <!-- Totals -->
       <div class="mt-6 border-t border-zinc-800 pt-4 space-y-2">
         <div class="flex justify-between text-zinc-300">
-          <span>Subtotal</span><span>{{ subtotal | currency:'MXN' }}</span>
+          <span>Subtotal</span><span>{{ subtotal | currency: "MXN" }}</span>
         </div>
 
         <button
           (click)="pay()"
           [disabled]="paying || cart.length === 0"
-          class="w-full mt-3 rounded-xl bg-amber-600 hover:bg-amber-500 disabled:opacity-40
-                 text-zinc-950 font-semibold py-3 transition"
+          class="w-full mt-3 rounded-xl bg-amber-600 hover:bg-amber-500 disabled:opacity-40 text-zinc-950 font-semibold py-3 transition"
         >
-          {{ paying ? 'Procesando...' : 'Cobrar' }}
+          {{ paying ? "Procesando..." : "Cobrar" }}
         </button>
 
         <button
@@ -185,57 +281,94 @@
 </div>
 
 <!-- TICKET MODAL (formal) -->
-<div *ngIf="ticketOpen && lastSale" class="fixed inset-0 z-50 flex items-center justify-center">
+<div
+  *ngIf="ticketOpen && lastSale"
+  class="fixed inset-0 z-50 flex items-center justify-center"
+>
   <div class="absolute inset-0 bg-black/60" (click)="closeTicket()"></div>
 
-  <div class="relative w-full max-w-xl mx-4 rounded-2xl border border-zinc-800 bg-zinc-950 text-zinc-100 overflow-hidden">
-    <div class="flex items-center justify-between px-5 py-4 border-b border-zinc-800">
+  <div
+    class="relative w-full max-w-xl mx-4 rounded-2xl border border-zinc-800 bg-zinc-950 text-zinc-100 overflow-hidden"
+  >
+    <div
+      class="flex items-center justify-between px-5 py-4 border-b border-zinc-800"
+    >
       <div>
         <h3 class="text-lg font-semibold">Ticket</h3>
         <p class="text-xs text-zinc-400">Venta {{ lastSale.saleId }}</p>
       </div>
-      <button (click)="closeTicket()" class="text-zinc-400 hover:text-zinc-200">✕</button>
+      <button (click)="closeTicket()" class="text-zinc-400 hover:text-zinc-200">
+        ✕
+      </button>
     </div>
 
     <div class="p-5 space-y-4">
       <div class="text-sm text-zinc-300">
-        <div class="flex justify-between"><span>Sucursal</span><span class="text-zinc-100">{{ lastSale.ticket.storeName }}</span></div>
-        <div class="flex justify-between"><span>Fecha</span><span class="text-zinc-100">{{ lastSale.ticket.timestamp }}</span></div>
-        <div class="flex justify-between"><span>Método</span><span class="text-zinc-100">{{ lastSale.ticket.paymentMethod }}</span></div>
+        <div class="flex justify-between">
+          <span>Sucursal</span
+          ><span class="text-zinc-100">{{ lastSale.ticket.storeName }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span>Fecha</span
+          ><span class="text-zinc-100">{{ lastSale.ticket.timestamp }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span>Método</span
+          ><span class="text-zinc-100">{{
+            lastSale.ticket.paymentMethod
+          }}</span>
+        </div>
       </div>
 
       <div class="border border-zinc-800 rounded-xl overflow-hidden">
-        <div class="grid grid-cols-12 px-4 py-2 text-xs text-zinc-400 border-b border-zinc-800">
+        <div
+          class="grid grid-cols-12 px-4 py-2 text-xs text-zinc-400 border-b border-zinc-800"
+        >
           <div class="col-span-6">Producto</div>
           <div class="col-span-2 text-right">Qty</div>
           <div class="col-span-2 text-right">P.U.</div>
           <div class="col-span-2 text-right">Total</div>
         </div>
-        <div *ngFor="let it of lastSale.ticket.items" class="grid grid-cols-12 px-4 py-2 text-sm border-b border-zinc-900">
+        <div
+          *ngFor="let it of lastSale.ticket.items"
+          class="grid grid-cols-12 px-4 py-2 text-sm border-b border-zinc-900"
+        >
           <div class="col-span-6">{{ it.name }}</div>
           <div class="col-span-2 text-right">{{ it.qty }}</div>
-          <div class="col-span-2 text-right">{{ it.unitPrice | currency:'MXN' }}</div>
-          <div class="col-span-2 text-right">{{ it.lineTotal | currency:'MXN' }}</div>
+          <div class="col-span-2 text-right">
+            {{ it.unitPrice | currency: "MXN" }}
+          </div>
+          <div class="col-span-2 text-right">
+            {{ it.lineTotal | currency: "MXN" }}
+          </div>
         </div>
       </div>
 
       <div class="space-y-2 text-sm">
         <div class="flex justify-between text-zinc-300">
-          <span>Subtotal</span><span class="text-zinc-100">{{ lastSale.subtotal | currency:'MXN' }}</span>
+          <span>Subtotal</span
+          ><span class="text-zinc-100">{{
+            lastSale.subtotal | currency: "MXN"
+          }}</span>
         </div>
         <div class="flex justify-between text-zinc-300">
           <span>Descuento</span>
           <span class="text-zinc-100">{{ lastSale.ticket.discount }}</span>
         </div>
         <div class="flex justify-between text-lg font-bold">
-          <span>Total</span><span class="text-amber-400">{{ lastSale.total | currency:'MXN' }}</span>
+          <span>Total</span
+          ><span class="text-amber-400">{{
+            lastSale.total | currency: "MXN"
+          }}</span>
         </div>
       </div>
     </div>
 
     <div class="px-5 py-4 border-t border-zinc-800 flex justify-end gap-2">
-      <button (click)="closeTicket()"
-              class="rounded-xl bg-zinc-900 border border-zinc-800 px-4 py-2 text-zinc-200 hover:bg-zinc-800">
+      <button
+        (click)="closeTicket()"
+        class="rounded-xl bg-zinc-900 border border-zinc-800 px-4 py-2 text-zinc-200 hover:bg-zinc-800"
+      >
         Cerrar
       </button>
     </div>

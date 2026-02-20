@@ -42,13 +42,19 @@ export class VentasComponent implements OnInit {
 
   // ====== Venta actual ======
   cart: CartItem[] = [];
-  customerId = ''; // opcional (por ahora)
+  customerId = '';
   paymentMethod: PaymentMethod = 'cash';
 
   // ====== Ticket ======
   paying = false;
   ticketOpen = false;
   lastSale: SaleResponse | null = null;
+
+  // ====== Customer ======
+  customerQuery = '';
+  selectedCustomerId: string | null = null;
+  selectedCustomerName= '';
+  customerNotFound = false;
 
   constructor(
     private productsService: ProductsService,
@@ -59,6 +65,30 @@ export class VentasComponent implements OnInit {
   ngOnInit(): void {
     this.loadProducts();
   }
+
+  // ====== Buscar cliente por ID (GET /customer/search?q=) ======
+  findCustomer() {
+  const q = this.customerQuery.trim();
+
+  this.customerNotFound = false;
+  this.selectedCustomerId = null;
+  this.selectedCustomerName = '';
+
+  if (!q) return;
+
+  this.customerService.lookupCustomer(q).subscribe({
+    next: (customer) => {
+      this.selectedCustomerId = customer.id;      // <-- tu backend usa "id"
+      this.selectedCustomerName = customer.name;  // <-- ya viene
+      this.customerNotFound = false;
+    },
+    error: () => {
+      this.customerNotFound = true;
+      this.selectedCustomerId = null;
+      this.selectedCustomerName = '';
+    },
+  });
+}
 
   // ====== GET PRODUCTS (mismo patrón) ======
   loadProducts(): void {
@@ -149,6 +179,11 @@ export class VentasComponent implements OnInit {
     this.customerId = '';
     this.paymentMethod = 'cash';
     this.errorMsg = '';
+
+    this.selectedCustomerId = null;
+    this.selectedCustomerName = '';
+    this.customerQuery = '';
+    this.customerNotFound = false;
   }
 
   get subtotal() {
@@ -167,7 +202,7 @@ export class VentasComponent implements OnInit {
     this.paying = true;
 
     this.salesService.createSale({
-      customerId: this.customerId.trim() ? this.customerId.trim() : undefined,
+      customerId: this.selectedCustomerId ?? undefined, 
       paymentMethod: this.paymentMethod,
       items: this.cart.map((it) => ({
         productId: it.productId,

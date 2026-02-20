@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-import { Customer } from '../../types/Customer';
+import { Customer, CustomerLookResponseSchema } from '../../types/Customer';
 
 @Injectable({
   providedIn: 'root'
@@ -43,6 +43,16 @@ export class CustomerService {
   createCustomer(customerData: { name: string; phoneOrEmail: string}): Observable<Customer> {
     return this.http.post<Customer>(`${this.baseUrl}/customers`, customerData);
   }
+
+  lookupCustomer(phoneOrEmail:string): Observable<Customer> {
+    return this.http.get<{ found: boolean; customer?: Customer }>(`${this.baseUrl}/customers/lookup`, { params: { phoneOrEmail } }).pipe(
+      map(response => {
+        const parsed = CustomerLookResponseSchema.parse(response);
+        if (!parsed.customer) {
+          throw new Error('Customer not found');
+        }
+        return parsed.customer;
+      })
+    );
+  }
 }
-
-

@@ -130,4 +130,52 @@ async function getCustomerById(req, res, next) {
     }
 }
 
-export { getCustomers, createCustomer, getCustomerById };
+async function lookupCustomer(req, res, next) {
+  try {
+    const raw = String(req.query.phoneOrEmail || "");
+
+    // 1) trim
+    let v = raw.trim();
+
+    // 2) Si viene como " 5244..." (porque el + se volvió espacio), lo reparamos:
+    //    si empieza con dígito y no tiene '+', le ponemos '+'
+    //    (si tú SOLO aceptas teléfonos en formato +52..., esto es perfecto)
+    if (!v.includes("@")) {
+      // quita espacios y guiones por si escriben " +52 449-..."
+      v = v.replace(/[\s-]/g, "");
+
+      if (v && /^[0-9]/.test(v)) {
+        v = `+${v}`;
+      }
+    } else {
+      v = v.toLowerCase();
+    }
+
+    if (!v) {
+      return res.status(422).json({
+        error: "Validation failed",
+        details: [{ field: "phoneOrEmail", message: "Phone or Email is required" }],
+      });
+    }
+
+    const customer = await Customer.findOne({ phoneOrEmail: v });
+
+    if (!customer) return res.status(200).json({ found: false });
+
+    return res.json({
+      found: true,
+      customer: {
+        id: String(customer._id),
+        name: customer.name,
+        phoneOrEmail: customer.phoneOrEmail,
+        purchasesCount: customer.purchasesCount,
+        createdAt: customer.createdAt,
+        updatedAt: customer.updatedAt,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export { getCustomers, createCustomer, getCustomerById, lookupCustomer };
