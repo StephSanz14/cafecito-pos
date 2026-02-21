@@ -130,25 +130,30 @@
 
       <!-- Cliente opcional -->
       <div class="mt-4">
+        <form [formGroup]="customerForm"
+        (ngSubmit)="findCustomer()">
         <label class="text-xs text-zinc-400">Cliente (opcional)</label>
 
         <div class="mt-2 flex gap-2">
           <input
-            [(ngModel)]="customerQuery"
-            name="customerQuery"
+            formControlName="phoneOrEmail"
             class="w-full rounded-xl bg-zinc-950 border border-zinc-800 px-3 py-2 text-zinc-100 placeholder:text-zinc-500"
             placeholder="Teléfono +52... o correo"
           />
 
           <button
-            type="button"
-            (click)="findCustomer()"
-            [disabled]="paying || !customerQuery.trim()"
+            type="submit"
+            [disabled]="paying || customerForm.invalid"
             class="shrink-0 rounded-xl bg-zinc-950 border border-zinc-800 px-3 py-2 text-zinc-200 hover:bg-zinc-800 disabled:opacity-40 transition"
           >
             Buscar
           </button>
         </div>
+        
+        <!-- en caso de haber error -->
+        <p *ngIf="customerInputError" class="mt-1 text-[11px] text-rose-300">
+      {{ customerInputError }}
+    </p>
 
         <!-- Cliente seleccionado -->
         <div
@@ -166,11 +171,7 @@
 
             <button
               type="button"
-              (click)="
-                selectedCustomerId = null;
-                selectedCustomerName = '';
-                customerNotFound = false
-              "
+              (click)="clearCustomer()"
               [disabled]="paying"
               class="rounded-lg bg-zinc-950 border border-zinc-800 px-2 py-1 text-xs text-zinc-200 hover:bg-zinc-800 disabled:opacity-40"
             >
@@ -189,6 +190,7 @@
             Puedes cobrar sin cliente o registrarlo después.
           </p>
 
+
           <!-- opcional: si luego abres modal para registrar -->
           <!--
     <button type="button" class="mt-2 rounded-xl bg-amber-600 px-3 py-2 text-zinc-950 font-semibold">
@@ -198,9 +200,9 @@
         </div>
 
         <p class="mt-1 text-[11px] text-zinc-500">
-          Si asignas un cliente, el backend calcula el descuento
-          automáticamente.
+          Si asignas un cliente, el descuento se refleja en la siguiente ventana.
         </p>
+        </form>
       </div>
 
       <!-- Payment method -->

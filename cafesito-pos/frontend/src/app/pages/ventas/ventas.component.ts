@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ProductsService } from '../../core/services/products/products.service';
 import { Product } from '../../core/types/Product';
 import { SaleService } from '../../core/services/sales/sale.service';
 import type { PaymentMethod, SaleResponse } from '../../core/types/Sale';
 import { CustomerService } from '../../core/services/customer/customer.service';
+
 
 
 type CartItem = {
@@ -20,11 +21,25 @@ type CartItem = {
 @Component({
   selector: 'app-ventas',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './ventas.component.html',
   styleUrl: './ventas.component.css',
 })
+
+
 export class VentasComponent implements OnInit {
+
+  private fb = new FormBuilder();
+  customerForm = this.fb.group({
+  phoneOrEmail: [
+    '',
+    [
+      Validators.maxLength(100),
+      Validators.pattern(/^(\+\d{12}|[^\s@]+@[^\s@]+\.[^\s@]+)$/),
+    ],
+  ],
+});
+
   // ====== Estado general (igual que productos) ======
   loading = false;
   errorMsg = '';
@@ -35,6 +50,17 @@ export class VentasComponent implements OnInit {
   page = 1;
   limit = 20;
   total = 0;
+
+  get customerInputError(): string {
+  const c = this.customerForm.controls.phoneOrEmail;
+  if (!c.touched || !c.errors) return '';
+
+  if (c.errors['pattern']) {
+    return 'Formato inválido. Tel: + y 13 caracteres (ej: +524499773850) o Email: nombre@dominio.com';
+  }
+  if (c.errors['maxlength']) return 'Demasiado largo.';
+  return 'Dato inválido.';
+}
 
   get totalPages() {
     return Math.max(1, Math.ceil(this.total / this.limit));
@@ -68,18 +94,22 @@ export class VentasComponent implements OnInit {
 
   // ====== Buscar cliente por ID (GET /customer/search?q=) ======
   findCustomer() {
-  const q = this.customerQuery.trim();
-
   this.customerNotFound = false;
   this.selectedCustomerId = null;
   this.selectedCustomerName = '';
 
+  // marca touched para que aparezca el error si está mal
+  this.customerForm.markAllAsTouched();
+
+  if (this.customerForm.invalid) return;
+
+  const q = (this.customerForm.value.phoneOrEmail ?? '').trim();
   if (!q) return;
 
   this.customerService.lookupCustomer(q).subscribe({
     next: (customer) => {
-      this.selectedCustomerId = customer.id;      // <-- tu backend usa "id"
-      this.selectedCustomerName = customer.name;  // <-- ya viene
+      this.selectedCustomerId = customer.id;
+      this.selectedCustomerName = customer.name;
       this.customerNotFound = false;
     },
     error: () => {
@@ -224,6 +254,13 @@ export class VentasComponent implements OnInit {
     });
   }
 
+  clearCustomer() {
+    this.selectedCustomerId = null;
+    this.selectedCustomerName = '';
+    this.customerQuery = '';
+    this.customerNotFound = false;
+    this.customerForm.reset({phoneOrEmail: ''});
+  }
   closeTicket() {
     this.ticketOpen = false;
     this.lastSale = null;
