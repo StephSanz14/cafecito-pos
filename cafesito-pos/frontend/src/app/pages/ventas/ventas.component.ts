@@ -94,17 +94,14 @@ export class VentasComponent implements OnInit {
 
   // ====== Buscar cliente por ID (GET /customer/search?q=) ======
   findCustomer() {
+  this.customerForm.markAllAsTouched();
+  if (this.customerForm.invalid) return;
+
+  const q = String(this.customerForm.value.phoneOrEmail || '').trim();
+
   this.customerNotFound = false;
   this.selectedCustomerId = null;
   this.selectedCustomerName = '';
-
-  // marca touched para que aparezca el error si está mal
-  this.customerForm.markAllAsTouched();
-
-  if (this.customerForm.invalid) return;
-
-  const q = (this.customerForm.value.phoneOrEmail ?? '').trim();
-  if (!q) return;
 
   this.customerService.lookupCustomer(q).subscribe({
     next: (customer) => {

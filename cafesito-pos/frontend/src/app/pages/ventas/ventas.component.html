@@ -190,13 +190,6 @@
             Puedes cobrar sin cliente o registrarlo después.
           </p>
 
-
-          <!-- opcional: si luego abres modal para registrar -->
-          <!--
-    <button type="button" class="mt-2 rounded-xl bg-amber-600 px-3 py-2 text-zinc-950 font-semibold">
-      Registrar cliente
-    </button>
-    -->
         </div>
 
         <p class="mt-1 text-[11px] text-zinc-500">
@@ -206,18 +199,20 @@
       </div>
 
       <!-- Payment method -->
-      <div class="mt-4">
-        <label class="text-xs text-zinc-400">Método de pago</label>
-        <select
-          [(ngModel)]="paymentMethod"
-          name="paymentMethod"
-          class="mt-2 w-full rounded-xl bg-zinc-950 border border-zinc-800 px-3 py-2 text-zinc-100"
-        >
-          <option value="cash">Efectivo</option>
-          <option value="card">Tarjeta</option>
-          <option value="transfer">Transferencia</option>
-        </select>
-      </div>
+<div class="mt-4">
+  <label class="text-xs text-zinc-400">Método de pago</label>
+
+  <select
+    [(ngModel)]="paymentMethod"
+    name="paymentMethod"
+    [ngModelOptions]="{ standalone: true }"
+    class="mt-2 w-full rounded-xl bg-zinc-950 border border-zinc-800 px-3 py-2 text-zinc-100"
+  >
+    <option value="cash">Efectivo</option>
+    <option value="card">Tarjeta</option>
+    <option value="transfer">Transferencia</option>
+  </select>
+</div>
 
       <!-- Items -->
       <div class="mt-4 space-y-3">

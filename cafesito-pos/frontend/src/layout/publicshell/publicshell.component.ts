@@ -70,6 +70,8 @@ import { Router } from '@angular/router';
   `,
 })
 export class PublicShellComponent {
+
+  constructor(private router: Router) {}
   private tokenService = inject(TokenService);
 
   hasSession(): boolean {
@@ -78,7 +80,6 @@ export class PublicShellComponent {
 
   logout(): void {
     this.tokenService.clear();
-    const router = inject(Router);
-    router.navigate(['/productos']);
+    this.router.navigate(['/productos']);
   }
 }

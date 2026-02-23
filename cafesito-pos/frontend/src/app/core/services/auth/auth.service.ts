@@ -34,4 +34,11 @@ export class AuthService {
       })
       .pipe(map((res) => ExistsResponseSchema.parse(res).exists));
   }
+
+  refreshToken(refreshToken: string) {
+  return this.http.post<{ token: string }>(
+    `${this.baseUrl}/auth/refresh-token`,
+    { refreshToken }
+  );
+}
 }

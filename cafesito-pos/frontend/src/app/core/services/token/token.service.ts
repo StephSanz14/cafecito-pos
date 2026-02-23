@@ -13,6 +13,10 @@ export class TokenService {
     localStorage.setItem(this.REFRESH_KEY, refreshToken);
   }
 
+  setAccessToken(token: string) {
+  localStorage.setItem(this.TOKEN_KEY, token);
+}
+
   getToken() { return localStorage.getItem(this.TOKEN_KEY); }
   getRole() { return localStorage.getItem(this.ROLE_KEY) as Role | null; }
   getRefreshToken() { return localStorage.getItem(this.REFRESH_KEY); }

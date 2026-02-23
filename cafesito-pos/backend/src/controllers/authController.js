@@ -82,20 +82,27 @@ const checkphoneOrEmailalredyRegistered = async (req, res, next) => {
 };
 
 const refreshToken = async (req, res, next) => {
-    try {
-        const { refreshToken } = req.body;
-        const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
-        const customer = await Customer.findById(decoded.id);
-        if (customer) {
-            const newToken = generateToken(customer._id, customer.role, customer.name);
+  try {
+    const { refreshToken } = req.body;
 
-            res.json({ token: newToken });
-        } else {
-            res.status(401).json({ message: 'Invalid refresh token' });
-        }
-    } catch (error) {
-        next(error);
+    if (!refreshToken) {
+      return res.status(400).json({ message: 'refreshToken is required' });
     }
+
+    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+    const customer = await Customer.findById(decoded.id);
+
+    if (!customer) {
+      return res.status(401).json({ message: 'Invalid refresh token' });
+    }
+
+    const newToken = generateToken(customer._id, customer.role, customer.name);
+
+    return res.status(200).json({ token: newToken });
+  } catch (error) {
+    // si expira o es inválido, jwt.verify cae aquí
+    return res.status(401).json({ message: 'Invalid refresh token' });
+  }
 };
 
 export { registerCustomer, loginCustomer, checkphoneOrEmailalredyRegistered, refreshToken };
