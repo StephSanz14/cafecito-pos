@@ -14,11 +14,22 @@ const app = express(); // Crea una instancia de la aplicación Express
 dbConnection(); // Establece la conexión a la base de datos
 
 // Configuración de CORS para permitir solicitudes desde el frontend
+const allowedOrigins = [
+  "http://localhost:4200",
+  process.env.FRONT_APP_URL,
+].filter(Boolean); // quita undefined/null
+
 app.use(cors({
-    origin: process.env.FRONT_APP_URL, // Permite solicitudes solo desde la URL del frontend definida en las variables de entorno
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-    credentials: true,
-    optionsSuccessStatus: 200,
+  origin: (origin, callback) => {
+    // origin puede venir undefined (Postman, curl) -> permitimos
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+
+    return callback(new Error(`Not allowed by CORS: ${origin}`));
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
 }));
 
 app.use(express.json()); // Middleware para parsear solicitudes con cuerpo en formato JSON
